@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Registration</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #eef2f7;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  form {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  input[type="text"], input[type="password"], input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+  }
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    outline: none;
+  }
+  input::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+  input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  .form-footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #777;
+  }
+  .form-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .form-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<form id="form1" name="form1" method="post" action="seller_registration_code">
+  <h2>Seller Registration</h2>
+  <div class="form-group">
+    <input type="text" name="name" placeholder="Full Name" required pattern="[A-Z a-z.]{3,25}">
+  </div>
+  <div class="form-group">
+    <input type="text" name="place" placeholder="Place" required>
+  </div>
+  <div class="form-group">
+    <input type="text" name="post" placeholder="Post" required>
+  </div>
+  <div class="form-group">
+    <input type="text" name="pincode" placeholder="Pincode (6 digits)" required pattern="[0-9]{6}">
+  </div>
+  <div class="form-group">
+    <input type="text" name="email" placeholder="Email Address" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}">
+  </div>
+  <div class="form-group">
+    <input type="text" name="phone" placeholder="Phone Number (10 digits)" required pattern="[6789][0-9]{9}">
+  </div>
+  <div class="form-group">
+    <input type="text" name="username" placeholder="Username" required>
+  </div>
+  <div class="form-group">
+    <input type="password" name="password" placeholder="Password" required>
+  </div>
+  <input type="submit" name="Submit" value="Register">
+
+</form>
+
+</body>
+</html>

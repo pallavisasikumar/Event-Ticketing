@@ -1,0 +1,86 @@
+{% extends "Admin/admin_index.html" %}
+{% block body %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form id="form1" name="form1" method="get" action="/manage_panchayath#about">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Place</th>
+                <th scope="col">Post</th>
+                <th scope="col">Pin</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Email</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in val %}
+              <tr class="table-row">
+                <td>{{ i['name'] }}</td>
+                <td>{{ i['place'] }}</td>
+                <td>{{ i['post'] }}</td>
+                <td>{{ i['pin'] }}</td>
+                <td>{{ i['phone'] }}</td>
+                <td>{{ i['email'] }}</td>
+                <td>
+                  <div class="btn-group">
+                    <a href="accept_seller?id={{ i['lid'] }}#about"
+                       class="btn btn-sm btn-success"
+                       aria-label="Accept {{ i['name'] }}">Accept</a>
+                    <a href="reject_seller?id={{ i['lid'] }}#about"
+                       class="btn btn-sm btn-danger"
+                       aria-label="Reject {{ i['name'] }}">Reject</a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Body animation */
+  body {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Table hover effect */
+  .table-row {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .table-row:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+  }
+
+  /* Button styles */
+  .btn-success {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+  }
+
+  .btn-danger {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-danger:hover {
+    background-color: #dc3545;
+    transform: scale(1.05);
+  }
+</style>
+{% endblock %}
