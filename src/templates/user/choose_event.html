@@ -1,0 +1,120 @@
+{% extends "user/user_index.html" %}
+{% block body %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Selection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .box {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .box .text {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .hidden-select {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">Choose Your Event</h1>
+  <form method="POST" action="/get_selected_option">
+    <input type="hidden" name="type" class="hidden-select" id="selected-type">
+    <div class="container">
+      <div class="box" data-value="dj_night" onclick="selectOption(this)">
+        <img src="../static/uploads/dj.jpg" alt="DJ Night">
+        <div class="text">DJ Night</div>
+      </div>
+      <div class="box" data-value="concert" onclick="selectOption(this)">
+        <img src="../static/uploads/concert.jpeg" alt="Concert">
+        <div class="text">Concert</div>
+      </div>
+      <div class="box" data-value="seminar" onclick="selectOption(this)">
+        <img src="../static/uploads/seminar.jpg" alt="Seminar">
+        <div class="text">Seminar</div>
+      </div>
+      <div class="box" data-value="workshop" onclick="selectOption(this)">
+        <img src="../static/uploads/workshop.jpg" alt="Workshop">
+        <div class="text">Workshop</div>
+      </div>
+      <div class="box" data-value="webinar" onclick="selectOption(this)">
+        <img src="../static/uploads/webinar.jpg" alt="Webinar">
+        <div class="text">Webinar</div>
+      </div>
+
+
+      <div class="box" data-value="conference" onclick="selectOption(this)">
+        <img src="../static/uploads/conference.jpg" alt="Conference">
+        <div class="text">Conference</div>
+      </div>
+      <div class="box" data-value="exhibition" onclick="selectOption(this)">
+        <img src="../static/uploads/exhibition.jpg" alt="Exhibition">
+        <div class="text">Exhibition</div>
+      </div>
+
+      <div class="box" data-value="sports_event" onclick="selectOption(this)">
+        <img src="../static/uploads/sports.jpg" alt="Sports Event">
+        <div class="text">Sports Event</div>
+      </div>
+      <div class="box" data-value="festival" onclick="selectOption(this)">
+        <img src="../static/uploads/festival.jpg" alt="Festival">
+        <div class="text">Festival</div>
+      </div>
+      <div class="box" data-value="theater_show" onclick="selectOption(this)">
+        <img src="../static/uploads/theater.jpg" alt="Theater Show">
+        <div class="text">Theater Show</div>
+      </div>
+
+      <div class="box" data-value="amusement_park" onclick="selectOption(this)">
+        <img src="../static/uploads/amusment.jpg" alt="Product Launch">
+        <div class="text">Amusement Park</div>
+      </div>
+    </div>
+    <button type="submit" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 1em;">Submit</button>
+  </form>
+  <script>
+    function selectOption(box) {
+      const value = box.getAttribute("data-value");
+      document.getElementById("selected-type").value = value;
+
+      // Clear active states
+      document.querySelectorAll(".box").forEach(b => b.style.border = "none");
+
+      // Highlight selected box
+      box.style.border = "3px solid #007BFF";
+    }
+  </script>
+</body>
+{% endblock %}

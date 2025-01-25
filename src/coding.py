@@ -202,13 +202,15 @@ def insert_event_details():
     venue = request.form['textfield4']
     number_of_ticket = request.form['textfield5']
     price = request.form['textfield6']
+    location = request.form['location']
+    type = request.form['type']
     image = request.files['file']
 
     image_name = secure_filename(image.filename)
     image.save(os.path.join('static/uploads', image_name))
 
-    qry = "INSERT INTO `event` VALUES(NULL,%s,%s,%s,%s,%s,%s)"
-    id = iud(qry, (session['lid'], name, details, venue, image_name, date))
+    qry = "INSERT INTO `event` VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s)"
+    id = iud(qry, (session['lid'], name, details, venue, location, image_name, date, type))
 
     qry = "INSERT INTO `tickets` VALUES(NULL, %s, %s, %s)"
     iud(qry, (id, number_of_ticket, price))
@@ -255,6 +257,23 @@ def view_cancellation():
     res = selectall2(qry, session['lid'])
 
     return render_template("Seller/view_cancellation.html", val = res)
+
+
+@app.route("/user_home")
+def user_home():
+    return render_template("user/user_index.html")
+
+
+@app.route("/choose_event")
+def choose_event():
+    return render_template("user/choose_event.html")
+
+
+@app.route("/get_selected_option", methods=['post'])
+def get_selected_option():
+    selected_type = request.form.get("type")
+    print(selected_type)
+    return render_template("user/select_event.html")
 
 
 app.run(debug=True)
