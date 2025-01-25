@@ -1,4 +1,4 @@
-{% extends "admin/admin_index.html" %}
+{% extends "Seller/seller_index.html" %}
 {% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
@@ -6,15 +6,13 @@
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="add_child">
+<form id="form1" name="form1" method="post" action="add_event_details">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
-      <th scope="col">User </th>
+      <th scope="col">Name </th>
       <th scope="col">Event </th>
-      <th scope="col">Seller Name </th>
-      <th scope="col">Reason for report </th>
+      <th scope="col">Reason</th>
       <th scope="col">Date</th>
-      <th scope="col"></th>
     </tr>
 
     {% for i in val %}
@@ -22,11 +20,8 @@
     <tr>
       <td>{{i['name']}}</td>
       <td>{{i['ename']}}</td>
-      <td>{{i['sname']}}</td>
       <td>{{i['reason']}}</td>
       <td>{{i['date']}}</td>
-      <td>
-      <p><a href="delete_child?id={{i['id']}}">Take action</a></p></td>
     </tr>
 
     {% endfor %}

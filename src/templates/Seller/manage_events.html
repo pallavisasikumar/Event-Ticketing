@@ -1,4 +1,4 @@
-{% extends "admin/admin_index.html" %}
+{% extends "Seller/seller_index.html" %}
 {% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
@@ -6,28 +6,40 @@
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="add_child">
+<form id="form1" name="form1" method="post" action="add_event_details">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
-      <th scope="col">User </th>
-      <th scope="col">Event </th>
-      <th scope="col">Reason for report </th>
+      <th scope="col">Name </th>
+      <th scope="col">Details </th>
+      <th scope="col">Venue</th>
+      <th scope="col">Image</th>
       <th scope="col">Date</th>
-      <th scope="col"></th>
+      <th scope="col">
+        Manage Tickets
+      </th>
     </tr>
 
     {% for i in val %}
 
     <tr>
-      <td>{{i['name']}}</td>
       <td>{{i['ename']}}</td>
-      <td>{{i['reason']}}</td>
+      <td>{{i['details']}}</td>
+      <td>{{i['venue']}}</td>
+      <td><img src="../static/uploads/{{i['image']}}" width="100px" height="100px"></td>
       <td>{{i['date']}}</td>
       <td>
-      <p><a href="delete_child?id={{i['id']}}">Take action</a></p></td>
+      <p><a href="manage_ticket?id={{i['id']}}">Manage Tickets</a></p>
+
+      <br>
+        <a href="delete_event?id={{i['id']}}">Delete</a>
+      </td>
     </tr>
 
     {% endfor %}
+
+    <tr align="center">
+      <td colspan="6"><input type="submit" value="Add" class="btn btn-primary"></td>
+    </tr>
 
   </table>
 </form>

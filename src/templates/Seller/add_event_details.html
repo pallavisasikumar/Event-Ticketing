@@ -1,0 +1,61 @@
+{% extends "Seller/seller_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="insert_event_details" enctype="multipart/form-data">
+  <table width="200" border="1" class="table table-hover table-striped">
+    <tr>
+      <th scope="col">Event name </th>
+      <th scope="col"><label>
+        <input type="text" name="textfield" required/>
+      </label></th>
+    </tr>
+    <tr>
+      <th>Details</th>
+      <td><label>
+      <input type="text" name="textfield2" required/>
+      </label></td>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <td><label>
+      <input type="date" name="textfield3" required/>
+      </label></td>
+    </tr>
+
+    <tr>
+      <th>Venue</th>
+      <td><input type="text" name="textfield4" required></td>
+    </tr>
+
+     <tr>
+      <th>Number of Tickets</th>
+      <td><input type="text" name="textfield5" required></td>
+    </tr>
+
+     <tr>
+      <th>Price</th>
+      <td><input type="text" name="textfield6" required></td>
+    </tr>
+
+
+     <tr>
+      <th>Image</th>
+      <td><input type="file" name="file" required></td>
+    </tr>
+
+    <tr align="center">
+      <td colspan="2"><label>
+        <input type="submit" name="Submit" value="Add" class="btn btn-primary"/>
+      </label></td>
+    </tr>
+  </table>
+  <label></label>
+</form>
+</body>
+<!--</html>-->
+{% endblock %}

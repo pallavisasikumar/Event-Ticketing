@@ -2,6 +2,7 @@ from flask import *
 from src.dbconnection import *
 import functools
 from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
@@ -162,7 +163,7 @@ def reject_sellerlph():
 
 @app.route("/view_report")
 def view_report():
-    qry= "SELECT `user`.name, `event`.ename, `reports`.* FROM `reports` JOIN `user` ON `reports`.lid=`user`.lid JOIN `event` ON `reports`.eid=`event`.id WHERE `reports`.Action = 'pending'"
+    qry= "SELECT `user`.name, `event`.ename, `reports`.*, `seller`.name AS sname FROM `reports` JOIN `user` ON `reports`.lid=`user`.lid JOIN `event` ON `reports`.eid=`event`.id join `seller` ON `event`.`seller_id`=`seller`.lid WHERE `reports`.Action = 'pending'"
     res = selectall(qry)
 
     return render_template("admin/view_scam_reports.html", val = res)
@@ -171,6 +172,89 @@ def view_report():
 @app.route("/seller_home")
 def seller_home():
     return render_template("seller/seller_index.html")
+
+
+@app.route("/manage_events")
+def manage_events():
+    qry = "SELECT `tickets`.id AS tid, `event`.* FROM `event` JOIN `tickets` ON `event`.`id`=`tickets`.eid WHERE `event`.`seller_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("seller/manage_events.html", val=res)
+
+
+@app.route("/delete_event")
+def delete_event():
+    id = request.args.get("id")
+    qry = "DELETE FROM `event` WHERE id=%s"
+    iud(qry, id)
+    return '''<script>alert("Deleted");window.location="/manage_events"</script>'''
+
+
+@app.route("/add_event_details", methods=['post'])
+def add_event_details():
+    return render_template("Seller/add_event_details.html")
+
+
+@app.route("/insert_event_details", methods=['post'])
+def insert_event_details():
+    name = request.form['textfield']
+    details = request.form['textfield2']
+    date = request.form['textfield3']
+    venue = request.form['textfield4']
+    number_of_ticket = request.form['textfield5']
+    price = request.form['textfield6']
+    image = request.files['file']
+
+    image_name = secure_filename(image.filename)
+    image.save(os.path.join('static/uploads', image_name))
+
+    qry = "INSERT INTO `event` VALUES(NULL,%s,%s,%s,%s,%s,%s)"
+    id = iud(qry, (session['lid'], name, details, venue, image_name, date))
+
+    qry = "INSERT INTO `tickets` VALUES(NULL, %s, %s, %s)"
+    iud(qry, (id, number_of_ticket, price))
+
+    return '''<script>alert("Successfully added");window.location="/manage_events"</script>'''
+
+
+@app.route("/manage_ticket")
+def manage_ticket():
+    id = request.args.get('id')
+    qry = "SELECT * FROM `tickets` WHERE eid=%s"
+    res = selectall2(qry, id)
+
+    return render_template("seller/manage_tickets.html", val=res)
+
+@app.route("/edit_ticket")
+def edit_ticket():
+    tid = request.args.get('tid')
+    session['tid'] = tid
+    qry = "SELECT * FROM `tickets` WHERE id =%s"
+    res = selectone(qry, tid)
+    return render_template("Seller/edit_ticket.html", val=res['ticket'])
+
+
+@app.route("/update_ticket", methods=['post'])
+def update_ticket():
+    ticket = request.form['textfield']
+    qry = "UPDATE `tickets` SET `ticket`=%s WHERE `id`=%s"
+    iud(qry, (ticket, session['tid']))
+
+    return '''<script>alert("Successfully Edited");window.location="manage_events"</script>'''
+
+
+@app.route("/view_bookings")
+def view_bookings():
+    qry = "SELECT `user`.name, `event`.ename, `booking`.* FROM `booking` JOIN `user` ON `booking`.lid = `user`.lid JOIN `event` ON `booking`.eid=`event`.id WHERE `event`.`seller_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("Seller/view_bookings.html", val=res)
+
+
+@app.route("/view_cancellation")
+def view_cancellation():
+    qry = "SELECT `user`.name, `event`.ename, `booking_cancellation`.* FROM `booking_cancellation` JOIN `booking` ON `booking_cancellation`.bid = `booking`.id JOIN `event` ON  `booking`.eid = `event`.id JOIN `user` ON `booking`.lid = `user`.lid WHERE `event`.`seller_id`=%s"
+    res = selectall2(qry, session['lid'])
+
+    return render_template("Seller/view_cancellation.html", val = res)
 
 
 app.run(debug=True)

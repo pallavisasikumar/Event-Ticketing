@@ -1,0 +1,32 @@
+{% extends "Seller/seller_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="add_event_details">
+  <table width="200" border="1" class="table table-hover table-striped">
+    <tr>
+      <th scope="col">Tickets Available </th>
+      <th scope="col">Manage Tickets</th>
+    </tr>
+
+    {% for i in val %}
+
+    <tr>
+      <td>{{i['ticket']}}</td>
+
+      <td>
+      <p><a href="edit_ticket?tid={{i['id']}}">Edit</a></p></td>
+    </tr>
+
+    {% endfor %}
+
+
+
+  </table>
+</form>
+</body>
+{% endblock %}
