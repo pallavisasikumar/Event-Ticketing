@@ -4,13 +4,13 @@ import functools
 from werkzeug.utils import secure_filename
 import os
 
-app = Flask(__name__)
+app = Flask(__name__) #flaskobject created
 
 
-app.secret_key="00999875"
+app.secret_key="00999875" #session use cheyn secret key
 
 
-def login_required(func):
+def login_required(func): # if lid not in session login pageilek ponm after logout
     @functools.wraps(func)
     def secure_function():
         if "lid" not in session:
@@ -21,7 +21,7 @@ def login_required(func):
 
 @app.route('/')
 def login():
-    return render_template("login_index.html")
+    return render_template("login_index.html") # html page browseril load chykan
 
 
 @app.route('/logout')
@@ -88,7 +88,6 @@ def registration_code():
             return '''<script>alert("Username already exists");window.location="/"</script>'''
 
     except Exception as e:
-        print("======="+str(e))
         return '''<script>alert("Email or phone already exists");window.location="/"</script>'''
 
 
@@ -273,7 +272,20 @@ def choose_event():
 def get_selected_option():
     selected_type = request.form.get("type")
     print(selected_type)
-    return render_template("user/select_event.html")
+    location = request.form['location']
+
+    qry = "SELECT * FROM `event` WHERE `location`=%s AND `type`=%s"
+    res = selectall2(qry, (location, selected_type))
+
+    print(res)
+
+    return render_template("user/view_events.html", val=res)
+
+#
+# @app.route("/purchase_ticket")
+# def purchase_ticket():
+#     id = request.args.get("id")
+#     qry = ""
 
 
 app.run(debug=True)
