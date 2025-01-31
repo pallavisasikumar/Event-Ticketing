@@ -1,0 +1,118 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+    }
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .event-details {
+      background-color: #2d87f0;
+      padding: 15px;
+      color: white;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .event-details h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .ticket-holder-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .ticket {
+      background: #e9ecef;
+      padding: 20px;
+      border-radius: 10px;
+      width: 270px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ticket:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .ticket p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    .ticket p strong {
+      color: #333;
+      font-weight: 600;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: #2d87f0;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 40px;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn:hover {
+      background: #1c6ec0;
+      transform: scale(1.05);
+    }
+    .btn:active {
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Booking Details</h2>
+
+    <!-- Event Details Section -->
+    <div class="event-details">
+      <h3>{{ details }}</h3>
+    </div>
+
+    <!-- Ticket Holder Details Section -->
+    <div class="ticket-holder-container">
+      {% for i in val %}
+        <div class="ticket">
+          <p><strong>Name:</strong> {{ i['name'] }}</p>
+          <p><strong>Date of Birth:</strong> {{ i['dob'] }}</p>
+          <p><strong>Gender:</strong> {{ i['gender'] }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <a href="{{ url_for('manage_bookings') }}" class="btn">Back to Events</a>
+  </div>
+
+</body>
+</html>

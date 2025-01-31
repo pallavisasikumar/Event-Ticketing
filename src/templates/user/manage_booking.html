@@ -1,0 +1,158 @@
+{% extends "user/user_index.html" %}
+
+{% block body %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Booked Events</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+    /* Set background color for the body */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #800080; /* Purple background */
+      color: #fff;
+      text-align: center;
+    }
+
+    /* Ensure About section also has a purple background */
+    #about {
+      background-color: #800080 !important;
+      color: white;
+      padding: 50px 0;
+    }
+
+    h1 {
+      margin: 40px 0;
+      font-size: 2.8rem;
+      color: #fff;
+      text-transform: uppercase;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: 20px;
+    }
+
+    .ticket {
+      width: 600px;
+      height: 250px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(25, 25, 25, 0.9), rgba(93, 0, 133, 0.9));
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(255, 0, 255, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .ticket:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(255, 0, 255, 0.5);
+    }
+
+    .ticket-info {
+      flex: 1;
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    .ticket-info h3 {
+      font-size: 2rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .ticket-info p {
+      margin: 5px 0;
+      font-size: 1rem;
+      color: #ddd;
+    }
+
+    .ticket-image {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      border: 5px solid #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .ticket:hover .ticket-image {
+      transform: scale(1.1);
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ff00ff;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 8px;
+      display: inline-block;
+      text-align: center;
+      transition: 0.3s ease;
+      border: 2px solid #ff00ff;
+    }
+
+    .btn:hover {
+      background-color: #ff00ff;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+    }
+
+    .cancel-btn {
+      background-color: #e60000;
+      color: white;
+      border: 2px solid #e60000;
+    }
+
+    .cancel-btn:hover {
+      background-color: #cc0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>My Booked Events</h1>
+
+  <div class="container">
+    {% for event in events %}
+      <div class="ticket">
+
+        <!-- Ticket Info -->
+        <div class="ticket-info">
+          <h3>{{ event['ename'] }}</h3>
+          <p><strong>Venue:</strong> {{ event['venue'] }}</p>
+          <p><strong>Location:</strong> {{ event['location'] }}</p>
+          <p><strong>Date:</strong> {{ event['date'] }}</p>
+          <p><strong>Tickets:</strong> {{ event['ticket_count'] }}</p>
+          <a href="view_booking_details?eid={{event['eid']}}&id={{event['id']}}" class="btn">View Details</a>
+          <a href="cancel_booking?eid={{event['eid']}}&id={{event['id']}}" class="btn cancel-btn">Cancel Booking</a>
+        </div>
+
+        <!-- Ticket Image -->
+        <div class="ticket-image" style="background-image: url('{{ url_for('static', filename='uploads/' + event['image']) }}');"></div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+{% endblock %}

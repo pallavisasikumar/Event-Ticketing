@@ -1,0 +1,99 @@
+{% extends "user/user_index.html" %}
+{% block body %}
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancel Booking</title>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #800080; /* Purple background */
+      color: #fff;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 100px auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 1rem;
+      text-align: left;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      resize: none;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 12px;
+      background: #e60000;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 8px;
+      display: inline-block;
+      text-align: center;
+      transition: 0.3s ease;
+      border: 2px solid #e60000;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #cc0000;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+
+    .back-btn {
+      background-color: #555;
+      border: 2px solid #555;
+    }
+
+    .back-btn:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Cancel Booking</h2>
+    <form action="{{ url_for('submit_cancellation') }}" method="POST">
+      <input type="hidden" name="eid" value="{{ event['eid'] }}">
+      <input type="hidden" name="id" value="{{ event['id'] }}">
+      
+      <label for="reason">Reason for Cancellation:</label>
+      <textarea id="reason" name="reason" rows="5" required></textarea>
+
+      <button type="submit" class="btn">Confirm Cancellation</button>
+      <a href="manage_bookings" class="btn back-btn">Go Back</a>
+    </form>
+  </div>
+
+</body>
+
+{% endblock %}

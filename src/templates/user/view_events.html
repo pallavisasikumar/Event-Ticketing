@@ -60,7 +60,7 @@
   <h1 style="text-align: center; margin-top: 20px;">Available Events</h1>
   <div class="container">
     {% for i in val %}
-    <a href="#" class="card" style="background-image: url('{{ url_for('static', filename='uploads/' ~ i['image']) }}');">
+    <a href="purchase_ticket?id={{i['id']}}" class="card" style="background-image: url('{{ url_for('static', filename='uploads/' ~ i['image']) }}');">
       <div class="details">
         <h3>{{ i['ename'] }}</h3>
         <p>{{ i['details'] }}</p>

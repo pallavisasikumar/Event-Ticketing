@@ -26,49 +26,48 @@
   <!-- Main CSS File -->
   <link href="../static/assets/css/main.css" rel="stylesheet">
 
+  <style>
+    /* Custom Styles */
+    .btn-primary {
+      background-color: #BDA971;
+      border: 0;
+    }
+
+    .btn-primary:hover {
+      background-color: #000000;
+    }
+
+    /* Hero Section Background */
+    #hero {
+      background-color: #800080; /* Purple */
+    }
+
+    /* About Section Background */
+    #about {
+      background-color: #800080; /* Purple */
+      color: white; /* Ensures text is visible */
+      padding: 50px 0; /* Adds padding */
+    }
+  </style>
+
 </head>
 
 <body class="index-page">
-
-<style>
-  .btn-primary{
-  background-color:#BDA971;
-  border:0;
-  }
-  .btn-primary:hover{
-   background-color:#000000;
-  }
-</style>
 
   <header id="header" class="header d-flex align-items-center position-relative">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="seller_home" class="logo d-flex align-items-center">
-
          <h1 class="sitename">Event Ticketing</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="user_home" class="">Home</a></li>
-
-<!--          <li class="dropdown"><a href="#"><span>Manage</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--            <ul>-->
-
-<!--                        <li><a href="manage_panchayath#about">Panchayath</a></li>-->
-<!--                                  <li><a href="manage_scheme#about">Government Schemes</a></li>-->
-
-
-<!--          <li><a href="manage_food#about">Food</a></li>-->
-
-<!--            </ul>-->
-<!--          </li>-->
-               <li><a href="choose_event#about">Search For Events</a></li>
-               <li><a href="view_bookings#about">Manage Bookings</a></li>
-               <li><a href="view_cancellation#about">Canceled Bookings</a></li>
-               <li><a href="/logout">Logout</a></li>
-
-
+          <li><a href="choose_event#about">Search For Events</a></li>
+          <li><a href="manage_bookings#about">Manage Bookings</a></li>
+          <li><a href="view_cancellation#about">Canceled Bookings</a></li>
+          <li><a href="/logout">Logout</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -82,16 +81,11 @@
     <section id="hero" class="hero section dark-background">
 
       <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
-
         <div class="carousel-item active">
           <img src="../static/assets/img/hero_1.jpg" alt="">
           <div class="carousel-container">
-<!--            <h2>All love begins and ends there.</h2>-->
-<!--            <p>There’s no way to be a perfect mother and a million ways to be a good one.</p>-->
           </div>
         </div><!-- End Carousel Item -->
-
-
 
         <ol class="carousel-indicators"></ol>
 
@@ -107,15 +101,12 @@
           <div class="row">
 
              {% block body %}
-
-
-        {% endblock %}
+             {% endblock %}
 
           </div>
         </div>
       </div>
     </section><!-- /About Section -->
-
 
   <!-- Vendor JS Files -->
   <script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
