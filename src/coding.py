@@ -197,8 +197,8 @@ def view_report():
     return render_template("admin/view_scam_reports.html", val = res)
 
 
-@app.route("/config_blockchain")
-def config_blockchain():
+@app.route("/data_to_blockchain")
+def data_to_blockchain():
     return "ok"
 
 
