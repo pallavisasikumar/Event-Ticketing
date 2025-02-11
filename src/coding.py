@@ -4,7 +4,17 @@ import functools
 from werkzeug.utils import secure_filename
 import os
 import uuid
-
+from web3 import Web3, HTTPProvider
+# truffle development blockchain address
+blockchain_address = 'http://127.0.0.1:7545'
+# Client instance to interact with the blockchain
+web3 = Web3(HTTPProvider(blockchain_address,{"timeout": 800}))
+# Set the default account (so we don't need to set the "from" for every transaction call)
+web3.eth.defaultAccount = web3.eth.accounts[0]
+compiled_contract_path = r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json"
+# Deployed contract address (see `migrate` command output: `contract address`)
+deployed_contract_address = '0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE'
+# Create your views here.
 app = Flask(__name__) #flaskobject created
 
 
@@ -372,17 +382,46 @@ def process_booking():
     # Insert into booking table
     qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
     bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+    with open(compiled_contract_path) as file:
+        contract_json = json.load(file)  # load contract info as JSON
+        contract_abi = contract_json['abi']  # fetch contract's abi - necessary to call its functions
+    contract = web3.eth.contract(address=deployed_contract_address, abi=contract_abi)
 
     # Insert ticket details into booking_details table
     qry = "INSERT INTO `booking_details` VALUES(null, %s, %s, %s, %s, %s)"
     for i, ticket in enumerate(tickets):
         ticket_id = ticket_ids[i]['id']  # Get the ticket ID from available tickets
+        res = selectone("SELECT `name` FROM `user` WHERE lid = %s", session['lid'])
+        Name = res['name']
+
+        res_evnt = selectone("SELECT ename FROM `event` WHERE id = %s", session['eid'])
+
+        Event_name = res_evnt['ename']
+
         iud(qry, (bid, ticket['name'], ticket['dob'], ticket['gender'], ticket_id))  # Insert each ticket with its ID
+        try:
+
+
+            blocknumber = web3.eth.get_block_number()
+            message2 = contract.functions.addreq(blocknumber + 1, str(Name)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
+                                                  ).transact({'from': web3.eth.accounts[0]})
+
+            print(message2)
+
+
+        except Exception as e:
+            print("==================")
+            print("==================")
+            print("==================")
+            print(str(e))
 
     # Update the ticket status to 'booked' for each assigned ticket
     for ticket_id in ticket_ids:
         qry = "UPDATE `tickets` SET `status`='booked' WHERE `id`=%s"
         iud(qry, (ticket_id['id'],))  # Mark the ticket as booked
+
+
+
 
     return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
 
@@ -410,13 +449,152 @@ def view_booking_details():
     qry = "SELECT `details` FROM `event` WHERE `id`=%s"
     res2 = selectone(qry, eid)
 
-    return render_template("user/booking_details.html", val=res, details = res2['details'])
+    details = view_details(eid)
+
+    print(details,"=====")
+
+    return render_template("user/booking_details.html", val=details, details = res2['details'])
+# def view_details(id):
+#     # Retrieve the user ID from POST request?
+#     qry = "SELECT NAME FROM `user` WHERE lid=%s"
+#     res = selectone(qry, session['lid'])
+#
+#     uname = res['NAME']
+#
+#     qry="SELECT ename FROM `event` WHERE id = %s"
+#     res = selectone(qry, id)
+#     event_name = res['ename']
+#     ctext=uname+"#"+event_name
+#     # Fetch donations based on the user ID
+#     # ob = bo.objects.filter(USER__LOGIN__id=bookid)
+#
+#     # Get list of user IDs from the donations table
+#
+#     try:
+#         # Load the contract ABI
+#         print("Loading contract ABI...")
+#         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
+#             contract_json = json.load(file)  # Load contract info as JSON
+#             contract_abi = contract_json['abi']  # Fetch contract's ABI
+#
+#         # Initialize contract with ABI and contract address
+#         contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
+#         blocknumber = web3.eth.get_block_number()  # Get the latest block number
+#         mdata = []  # List to store the matching data
+#
+#         print("Current Block Number:", blocknumber)
+#
+#         # Iterate over blocks in reverse order
+#         for i in range(blocknumber, 3, -1):
+#             print(f"Processing Block {i}...")
+#
+#             try:
+#                 # Get the transaction from the block
+#                 a = web3.eth.get_transaction_by_block(i, 0)
+#
+#                 # Decode the function input
+#                 decoded_input = contract.decode_function_input(a['input'])
+#                 print(f"Decoded Input for Block {i}: {decoded_input}")
+#
+#                 # Check if the UID in the decoded input matches the user IDs in the list
+#                 if decoded_input[1]['bid'].split("#")[1]==event_name:
+#                     # Collect required data (passing the necessary details)
+#                     data = {
+#                         'name': str(decoded_input[1]['name']),
+#                         # Transaction date
+#                         'dob': str(decoded_input[1]['dob']),  # Did (e.g., some identifier from the contract)
+#                         # 'status': decoded_input[1]['status'],  # Transaction status
+#                         'gender': str(decoded_input[1]['gender']),  # Donation amount
+#                     }
+#                     print(f"Matching data found: {data}")
+#
+#                     # Append the data to the result list
+#                     mdata.append(data)
+#                     print(f"Updated data list: {mdata}")
+#                 else:
+#                     print(f"No match for Block {i}")
+#
+#             except Exception as e:
+#                 print(f"Error Processing Block {i}: {e}")
+#                 pass
+#
+#     except Exception as e:
+#         print(f"Error with contract ABI or interaction: {e}")
+#
+#     # Final response with the collected data
+#     print("Final Collected Data:")
+#     print(mdata)
+#
+#     # Returning the data to the frontend as JSON
+#     return jsonify({"task": "valid", "data": mdata})
+
+
+
+def view_details(id):
+    # Retrieve the user ID from session
+    qry = "SELECT NAME FROM `user` WHERE lid=%s"
+    res = selectone(qry, session['lid'])
+
+    uname = res['NAME']
+
+    qry="SELECT ename FROM `event` WHERE id = %s"
+    res = selectone(qry, id)
+    event_name = res['ename']
+    ctext = uname + "#" + event_name
+
+    try:
+        print("Loading contract ABI...")
+        with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
+            contract_json = json.load(file)
+            contract_abi = contract_json['abi']
+
+        contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
+        blocknumber = web3.eth.get_block_number()
+        mdata = []
+
+        print("Current Block Number:", blocknumber)
+
+        for i in range(blocknumber, 3, -1):
+            print(f"Processing Block {i}...")
+
+            try:
+                a = web3.eth.get_transaction_by_block(i, 0)
+                decoded_input = contract.decode_function_input(a['input'])
+
+                if decoded_input[1]['bid'].split("#")[1] == event_name:
+                    data = {
+                        'name': str(decoded_input[1]['name']),
+                        'dob': str(decoded_input[1]['dob']),
+                        'gender': str(decoded_input[1]['gender']),
+                    }
+                    mdata.append(data)
+                    print(f"Updated data list: {mdata}")
+
+            except Exception as e:
+                print(f"Error Processing Block {i}: {e}")
+                pass
+
+    except Exception as e:
+        print(f"Error with contract ABI or interaction: {e}")
+
+    print("Final Collected Data:", mdata)
+
+    return mdata  # Return data as a normal list, not as JSON
+
+
 
 
 @app.route("/cancel_booking")
 def cancel_booking():
     id = request.args.get("id")
+    session['bdi'] = id
+    return render_template("user/cancel_booking.html")
 
+
+@app.route("/cancel_booking_confirm")
+def cancel_booking_confirm():
+    reason = request.form['reason']
+    qry = "SELECT `ticket_id` FROM `booking_details` WHERE `id`=%s"
 
 
 app.run(debug=True)
