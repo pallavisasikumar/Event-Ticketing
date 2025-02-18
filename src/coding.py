@@ -193,8 +193,12 @@ def seller_home():
 @app.route("/manage_events")
 @login_required
 def manage_events():
-    qry = "SELECT `tickets`.id AS tid, `event`.* FROM `event` JOIN `tickets` ON `event`.`id`=`tickets`.eid WHERE `event`.`seller_id`=%s"
+    # qry = "SELECT `tickets`.id AS tid, `event`.* FROM `event` JOIN `tickets` ON `event`.`id`=`tickets`.eid WHERE `event`.`seller_id`=%s"
+    # res = selectall2(qry, session['lid'])
+
+    qry = "SELECT * FROM `event` WHERE `seller_id`=%s"
     res = selectall2(qry, session['lid'])
+
     return render_template("seller/manage_events.html", val=res)
 
 
@@ -274,10 +278,16 @@ def insert_event_details():
 @login_required
 def manage_ticket():
     id = request.args.get('id')
-    qry = "SELECT * FROM `tickets` WHERE eid=%s"
-    res = selectall2(qry, id)
+    qry = "SELECT count(*) as total FROM `tickets` WHERE eid=%s"
+    res = selectone(qry, id)
 
-    return render_template("seller/manage_tickets.html", val=res)
+    qry = "SELECT count(*) as booked FROM `tickets` WHERE eid=%s AND status='booked'"
+    res2 = selectone(qry, id)
+
+    qry = "SELECT count(*) as available FROM `tickets` WHERE eid=%s AND status='available'"
+    res3 = selectone(qry, id)
+
+    return render_template("seller/manage_tickets.html", val=res, val2=res2, val3=res3)
 
 # @app.route("/edit_ticket")
 # @login_required
@@ -431,10 +441,14 @@ def manage_bookings():
     qry = "SELECT event.`ename`,`details`,`venue`,`location`,`image`,event.`date`, `event`.id AS eid ,`event`.seller_id AS sid ,`booking`.id,`ticket_count`,booking.`date` AS booking_date FROM `event` JOIN `booking`ON `event`.id=`booking`.eid WHERE `booking`.lid=%s"
     res = selectall2(qry, session['lid'])
 
-    sid = res[0]['sid']
+    res2 = "NONE"
 
-    qry = "SELECT * FROM `seller` WHERE lid=%s"
-    res2 = selectone(qry, sid)
+    if len(res)!=0:
+
+        sid = res[0]['sid']
+
+        qry = "SELECT * FROM `seller` WHERE lid=%s"
+        res2 = selectone(qry, sid)
 
     return render_template("user/manage_booking.html", events = res, seller = res2)
 

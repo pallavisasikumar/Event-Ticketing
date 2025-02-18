@@ -9,20 +9,23 @@
 <form id="form1" name="form1" method="post" action="add_event_details">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
-      <th scope="col">Tickets Available </th>
+      <th scope="col">Total Tickets</th>
+      <th scope="col">Total Booked Tickets</th>
+      <th scope="col">Currently Available Tickets</th>
       <th scope="col">Manage Tickets</th>
     </tr>
 
-    {% for i in val %}
+
 
     <tr>
-      <td>{{i['ticket']}}</td>
+      <td>{{val['total']}}</td>
+      <td>{{val2['booked']}}</td>
+      <td>{{val3['available']}}</td>
 
       <td>
-      <p><a href="edit_ticket?tid={{i['id']}}">Edit</a></p></td>
+      <p><a href="#">Edit</a></p></td>
     </tr>
 
-    {% endfor %}
 
 
 
