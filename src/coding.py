@@ -595,6 +595,9 @@ def view_details(id):
 
     return mdata  # Return data as a normal list, not as JSON
 
+@app.route("/ticket_selection")
+def ticket_selection():
+    return "ok"
 
 
 
