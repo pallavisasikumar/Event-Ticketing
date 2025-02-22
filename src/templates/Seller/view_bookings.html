@@ -13,6 +13,7 @@
       <th scope="col">Event </th>
       <th scope="col">Number of tickets Booked</th>
       <th scope="col">Date</th>
+      <th scope="col"></th>
     </tr>
 
     {% for i in val %}
@@ -22,6 +23,7 @@
       <td>{{i['ename']}}</td>
       <td>{{i['ticket_count']}}</td>
       <td>{{i['date']}}</td>
+      <td><a href="view_bookings_details?id={{i['id']}}">View Details</a> </td>
     </tr>
 
     {% endfor %}

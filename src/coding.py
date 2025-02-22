@@ -317,6 +317,75 @@ def view_bookings():
     return render_template("Seller/view_bookings.html", val=res)
 
 
+@app.route("/view_bookings_details")
+def view_bookings_details():
+    id = request.args.get('id')
+    data = user_view_booking_details(id)
+
+    print("====",data,"===============")
+
+    return "ok"
+
+
+def user_view_booking_details(id):
+
+    qry = "SELECT * FROM `booking` WHERE id = %s"
+    booking = selectone(qry, id)
+
+    # Retrieve the user ID from session
+    qry = "SELECT NAME FROM `user` WHERE lid=%s"
+    res = selectone(qry, booking['lid'])
+
+    uname = res['NAME']
+
+    qry="SELECT ename FROM `event` WHERE id = %s"
+    res = selectone(qry, booking['eid'])
+    event_name = res['ename']
+    ctext = uname + "#" + event_name
+
+    try:
+        print("Loading contract ABI...")
+        with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
+            contract_json = json.load(file)
+            contract_abi = contract_json['abi']
+
+        contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
+        blocknumber = web3.eth.get_block_number()
+        mdata = []
+
+        print("Current Block Number:", blocknumber)
+
+        for i in range(blocknumber, 3, -1):
+            print(f"Processing Block {i}...")
+
+            try:
+                a = web3.eth.get_transaction_by_block(i, 0)
+                decoded_input = contract.decode_function_input(a['input'])
+
+                # if decoded_input[1]['bid'].split("#")[1] == event_name:
+
+                if decoded_input[1]['bid'] == ctext:
+                    data = {
+                        'name': str(decoded_input[1]['name']),
+                        'dob': str(decoded_input[1]['dob']),
+                        'gender': str(decoded_input[1]['gender']),
+                    }
+                    mdata.append(data)
+                    print(f"Updated data list: {mdata}")
+
+            except Exception as e:
+                print(f"Error Processing Block {i}: {e}")
+                pass
+
+    except Exception as e:
+        print(f"Error with contract ABI or interaction: {e}")
+
+    print("Final Collected Data:", mdata)
+
+    return mdata  # Return data as a normal list, not as JSON
+
+
+
 @app.route("/view_cancellation")
 @login_required
 def view_cancellation():
@@ -575,7 +644,10 @@ def view_details(id):
                 a = web3.eth.get_transaction_by_block(i, 0)
                 decoded_input = contract.decode_function_input(a['input'])
 
-                if decoded_input[1]['bid'].split("#")[1] == event_name:
+                # if decoded_input[1]['bid'].split("#")[1] == event_name:
+
+                if decoded_input[1]['bid'] == ctext:
+
                     data = {
                         'name': str(decoded_input[1]['name']),
                         'dob': str(decoded_input[1]['dob']),
