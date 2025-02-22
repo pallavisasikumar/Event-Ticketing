@@ -320,14 +320,14 @@ def view_bookings():
 @app.route("/view_bookings_details")
 def view_bookings_details():
     id = request.args.get('id')
-    data = user_view_booking_details(id)
+    data = seller_view_booking_details(id)
 
     print("====",data,"===============")
 
-    return "ok"
+    return render_template("Seller/booking_details.html", val = data)
 
 
-def user_view_booking_details(id):
+def seller_view_booking_details(id):
 
     qry = "SELECT * FROM `booking` WHERE id = %s"
     booking = selectone(qry, id)
