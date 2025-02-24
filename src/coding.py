@@ -680,6 +680,8 @@ def cancel_booking():
     return render_template("user/cancel_booking.html")
 
 
+
+
 @app.route("/cancel_booking_confirm")
 def cancel_booking_confirm():
     reason = request.form['reason']
