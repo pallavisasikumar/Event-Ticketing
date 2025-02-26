@@ -196,7 +196,12 @@ def view_report():
 
     return render_template("admin/view_scam_reports.html", val = res)
 
-hisudhfkwhfkwjf
+
+@app.route("/into_blockchain")
+def into_blockchain():
+    return "ok"
+
+
 @app.route("/take_action")
 def take_action():
     id = request.args.get('id')
