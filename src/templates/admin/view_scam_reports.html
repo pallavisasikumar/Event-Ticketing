@@ -1,37 +1,144 @@
 {% extends "admin/admin_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+  <meta charset="UTF-8">
+  <title>Scam Reports</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #dc3545;
+      font-weight: 700;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: #dc3545;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 1em;
+    }
+
+    tbody tr {
+      background: #ffffff;
+      transition: background 0.3s ease-in-out;
+    }
+
+    tbody tr:hover {
+      background: rgba(220, 53, 69, 0.1);
+    }
+
+    .action-btn {
+      background: #dc3545;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9em;
+      font-weight: 600;
+      transition: all 0.3s ease-in-out;
+      display: inline-block;
+    }
+
+    .action-btn:hover {
+      background: #b02a37;
+      box-shadow: 0 3px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .no-data {
+      text-align: center;
+      font-size: 1.2em;
+      color: #888;
+      padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      table {
+        font-size: 0.9em;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="add_child">
-  <table width="200" border="1" class="table table-hover table-striped">
-    <tr>
-      <th scope="col">User </th>
-      <th scope="col">Event </th>
-      <th scope="col">Seller Name </th>
-      <th scope="col">Reason for report </th>
-      <th scope="col">Date</th>
-      <th scope="col"></th>
-    </tr>
-
-    {% for i in val %}
-
-    <tr>
-      <td>{{i['name']}}</td>
-      <td>{{i['ename']}}</td>
-      <td>{{i['sname']}}</td>
-      <td>{{i['reason']}}</td>
-      <td>{{i['date']}}</td>
-      <td>
-      <p><a href="delete_child?id={{i['id']}}">Take action</a></p></td>
-    </tr>
-
-    {% endfor %}
-
-  </table>
-</form>
+  <div class="container">
+    <h2>🚨 Reported Scam Cases</h2>
+    <div class="table-container">
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Event</th>
+            <th>Seller Name</th>
+            <th>Reason</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if val %}
+            {% for i in val %}
+            <tr>
+              <td>{{ i['name'] }}</td>
+              <td>{{ i['ename'] }}</td>
+              <td>{{ i['sname'] }}</td>
+              <td>{{ i['reason'] }}</td>
+              <td>{{ i['date'] }}</td>
+              <td><a href="take_action?id={{ i['id'] }}&lid={{ i['lid'] }}&eid={{ i['eid'] }}" class="action-btn">Take Action</a></td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="no-data">No reports found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </body>
 {% endblock %}

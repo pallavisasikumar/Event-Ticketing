@@ -1,0 +1,113 @@
+{% extends "admin/admin_index.html" %}
+{% block body %}
+<head>
+  <meta charset="UTF-8">
+  <title>Take Action</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #dc3545;
+      font-weight: 700;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .info-box {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 5px solid #dc3545;
+      margin-bottom: 15px;
+      font-size: 0.95em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #a71d2a;
+      box-shadow: 0 3px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      margin-top: 10px;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>🚨 Take Action</h2>
+
+
+    <form action="" method="POST">
+      <label for="action">Action to Take:</label>
+      <select id="action" name="action" required>
+        <option value="" disabled selected>Select an action</option>
+        <option value="warning">Issue a Warning</option>
+        <option value="ban">Ban Seller</option>
+        <option value="ignore">Ignore Report</option>
+      </select>
+
+      <label for="remarks">Admin Remarks:</label>
+      <textarea id="remarks" name="remarks" rows="4" placeholder="Add any comments..."></textarea>
+
+      <button type="submit" class="btn">Submit Action</button>
+      <a href="admin_reports" class="btn btn-cancel">Cancel</a>
+    </form>
+  </div>
+</body>
+{% endblock %}

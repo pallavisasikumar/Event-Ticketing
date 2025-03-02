@@ -1,0 +1,125 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Scam</title>
+  <style>
+    /* Modern Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #dc3545;
+      font-size: 1.8em;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 1em;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 1em;
+      background: rgba(255, 255, 255, 0.3);
+      color: #000;
+      transition: 0.3s;
+    }
+
+    textarea:focus {
+      background: rgba(255, 255, 255, 0.6);
+      border-color: #dc3545;
+      outline: none;
+      box-shadow: 0 0 5px rgba(220, 53, 69, 0.2);
+    }
+
+    .file-input {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
+      font-weight: 600;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      background: #b02a37;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+      .container {
+        max-width: 90%;
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🚨 Report a Scam</h2>
+    <form action="/submit_scam" method="POST" enctype="multipart/form-data">
+      <label for="description">Describe the Scam:</label>
+      <textarea id="description" name="description" rows="5" required></textarea>
+
+<!--      <label for="evidence">Upload Evidence (optional):</label>-->
+<!--      <input type="file" id="evidence" name="evidence" class="file-input">-->
+
+      <button type="submit" class="btn">Submit Report</button>
+    </form>
+  </div>
+</body>
+</html>

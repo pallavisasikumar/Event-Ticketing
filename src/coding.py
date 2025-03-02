@@ -3,7 +3,14 @@ from src.dbconnection import *
 import functools
 from werkzeug.utils import secure_filename
 import os
+
+from flask_mail import *
+from email import encoders
+
 import uuid
+
+
+
 from web3 import Web3, HTTPProvider
 # truffle development blockchain address
 blockchain_address = 'http://127.0.0.1:7545'
@@ -20,6 +27,12 @@ app = Flask(__name__) #flaskobject created
 
 app.secret_key="00999875" #session use cheyn secret key
 
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'smartpass1216@gmail.com'
+app.config['MAIL_PASSWORD'] = 'gdwf cqji ehtf sedt'
 
 def login_required(func): # if lid not in session login pageilek ponm after logout
     @functools.wraps(func)
@@ -182,6 +195,77 @@ def view_report():
     res = selectall(qry)
 
     return render_template("admin/view_scam_reports.html", val = res)
+
+
+@app.route("/take_action")
+def take_action():
+    id = request.args.get('id')
+    session['report_id'] = id
+
+    lid = request.args.get("lid")
+    session['userid'] = lid
+
+    eid = request.args.get('eid')
+    session['evntid'] = eid
+    return render_template("admin/takeaction.html")
+
+
+@app.route("/submit_action", methods=['[post'])
+def submit_action():
+    action = request.form['action']
+    remarks = request.form['remarks']
+
+    qry = "SELECT email FROM `user` WHERE lid=%s"
+    user_email = selectone(qry, session['userid'])
+
+    qry = "SELECT lid,email FROM `seller` JOIN `event` ON `seller`.lid = `event`.seller_id WHERE `event`.id = %s"
+    seller_email = selectone(qry, session['evntid'])
+
+
+    def mail(email, subject):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('smartpass1216@gmail.com', 'gdwf cqji ehtf sedt')
+        except Exception as e:
+            print("Couldn't setup email!!" + str(e))
+        msg = MIMEText(remarks)
+        print(msg)
+        msg['Subject'] = subject
+        msg['To'] = email
+        msg['From'] = 'smartpass1216@gmail.com'
+        try:
+            gmail.send_message(msg)
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+        return '''<script>alert("Success");window.location="/view_report"</script>'''
+
+    if action == "warning":
+        qry = "UPDATE `reports` SET ACTION='warned about the report' WHERE id=%s"
+        iud(qry, session['report_id'])
+
+        mail(seller_email['email'], "Scam report recieved")
+        mail(user_email['Email'], "Copy Of Action")
+        return '''<script>alert("Success");window.location="/view_report"</script>'''
+
+    elif action == "ban":
+        qry = "UPDATE `reports` SET ACTION='Seller Banned' WHERE id=%s"
+        iud(qry, session['report_id'])
+
+        mail(seller_email['email'], "Account Banned")
+        mail(user_email['email'], "Action againts seller")
+
+        qry = "UPDATE `login` SET TYPE='banned' WHERE id=%s"
+        iud(qry, seller_email['lid'])
+        return '''<script>alert("Success");window.location="/view_report"</script>'''
+
+    else:
+        mail(user_email['email'], "Report Ignored")
+        return '''<script>alert("Success");window.location="/view_report"</script>'''
+
+
+    return '''<script>alert("Success");window.location="/view_report"</script>'''
 
 
 @app.route("/seller_home")
@@ -537,6 +621,26 @@ def view_booking_details():
     print(details,"=====")
 
     return render_template("user/booking_details.html", val=details, details = res2['details'])
+
+
+@app.route("/report_scam")
+def report_scam():
+    id = request.args.get("id")
+    session['r_e_id'] = id
+
+    return render_template("user/report_scam.html")
+
+
+@app.route("/submit_scam", methods=['post'])
+def submit_scam():
+    details = request.form['description']
+
+    qry = "INSERT INTO `reports` VALUES(null, %s, %s, %s, CURDATE(), 'pending')"
+    iud(qry, (session['lid'], session['r_e_id'], details))
+
+    return '''<script>alert("Reported");window.location="choose_event"</script>'''
+
+
 # def view_details(id):
 #     # Retrieve the user ID from POST request?
 #     qry = "SELECT NAME FROM `user` WHERE lid=%s"
@@ -667,19 +771,12 @@ def view_details(id):
 
     return mdata  # Return data as a normal list, not as JSON
 
-@app.route("/ticket_selection")
-def ticket_selection():
-    return "ok"
-
-
 
 @app.route("/cancel_booking")
 def cancel_booking():
     id = request.args.get("id")
     session['bdi'] = id
     return render_template("user/cancel_booking.html")
-
-
 
 
 @app.route("/cancel_booking_confirm")
