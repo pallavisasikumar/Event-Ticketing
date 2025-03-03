@@ -515,7 +515,7 @@ def purchase_ticket():
     qry = "SELECT * FROM `event` WHERE id=%s"
     res = selectone(qry, id)
 
-    qry = "SELECT COUNT(*) as count, price FROM `tickets` WHERE eid=%s"
+    qry = "SELECT COUNT(*) as count, price FROM `tickets` WHERE eid=%s and status='available'"
     res2 = selectone(qry, id)
 
     return render_template("user/purchase ticket.html", event = res, ticket = res2["count"], price = res2['price'])
@@ -544,8 +544,19 @@ def process_booking():
         return '''<script>alert("Not enough available tickets!");window.location="/user_home"</script>'''
 
     # Insert into booking table
-    qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
-    bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+
+    qry = "SELECT * FROM `booking` WHERE eid = %s AND lid=%s"
+    booking_res = selectone(qry, (session['eid'], session['lid']))
+
+    if booking_res is None:
+
+        qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
+        bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+    else:
+        bid = booking_res['id']
+        qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s WHERE id = %s"
+        iud(qry, (int(num_tickets) , bid))
+
     with open(compiled_contract_path) as file:
         contract_json = json.load(file)  # load contract info as JSON
         contract_abi = contract_json['abi']  # fetch contract's abi - necessary to call its functions
