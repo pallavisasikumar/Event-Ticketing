@@ -73,6 +73,12 @@ def login_code():
         return '''<script>alert("Welcome Seller");window.location="seller_home"</script>'''
     elif res['type'] == "user":
         session['lid'] = res['id']
+
+        qry = "select * from user where lid = %s"
+        res = selectone(qry, res['id'])
+
+        session['state'] = res['state']
+
         return '''<script>alert("Welcome User");window.location="user_home"</script>'''
     else:
         return '''<script>alert("Invalid Username or Password");window.location="/"</script>'''
@@ -91,6 +97,9 @@ def registration_code():
         place=request.form['place']
         post=request.form['post']
         pin=request.form['pincode']
+
+        state = request.form['state']
+
         ph_no=request.form['phone']
         email=request.form['email']
         username=request.form['username']
@@ -104,8 +113,8 @@ def registration_code():
             qry = "INSERT INTO login VALUES(NULL,%s,%s,'user')"
             id = iud(qry,(username,password))
 
-            qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s)"
-            iud(qry,(id, name, place, post, pin, ph_no, email))
+            qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s)"
+            iud(qry,(id, name, place, post, pin, state, ph_no, email))
 
             return '''<script>alert("Successfully registered");window.location="/"</script>'''
         else:
@@ -489,7 +498,13 @@ def user_home():
 @app.route("/choose_event")
 @login_required
 def choose_event():
-    return render_template("user/choose_event.html")
+
+    qry = "SELECT * FROM `event` WHERE location = %s AND DATE > CURDATE()"
+    res = selectall2(qry, session['state'])
+
+    print(res)
+
+    return render_template("user/choose_event.html" , val = res)
 
 
 @app.route("/get_selected_option", methods=['post'])
@@ -630,8 +645,6 @@ def view_booking_details():
 
     details = view_details(eid)
 
-    print(details,"=====")
-
     return render_template("user/booking_details.html", val=details, details = res2['details'])
 
 
@@ -639,7 +652,6 @@ def view_booking_details():
 def report_scam():
     id = request.args.get("id")
     session['r_e_id'] = id
-
     return render_template("user/report_scam.html")
 
 
@@ -651,82 +663,6 @@ def submit_scam():
     iud(qry, (session['lid'], session['r_e_id'], details))
 
     return '''<script>alert("Reported");window.location="choose_event"</script>'''
-
-
-# def view_details(id):
-#     # Retrieve the user ID from POST request?
-#     qry = "SELECT NAME FROM `user` WHERE lid=%s"
-#     res = selectone(qry, session['lid'])
-#
-#     uname = res['NAME']
-#
-#     qry="SELECT ename FROM `event` WHERE id = %s"
-#     res = selectone(qry, id)
-#     event_name = res['ename']
-#     ctext=uname+"#"+event_name
-#     # Fetch donations based on the user ID
-#     # ob = bo.objects.filter(USER__LOGIN__id=bookid)
-#
-#     # Get list of user IDs from the donations table
-#
-#     try:
-#         # Load the contract ABI
-#         print("Loading contract ABI...")
-#         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
-#             contract_json = json.load(file)  # Load contract info as JSON
-#             contract_abi = contract_json['abi']  # Fetch contract's ABI
-#
-#         # Initialize contract with ABI and contract address
-#         contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
-#         blocknumber = web3.eth.get_block_number()  # Get the latest block number
-#         mdata = []  # List to store the matching data
-#
-#         print("Current Block Number:", blocknumber)
-#
-#         # Iterate over blocks in reverse order
-#         for i in range(blocknumber, 3, -1):
-#             print(f"Processing Block {i}...")
-#
-#             try:
-#                 # Get the transaction from the block
-#                 a = web3.eth.get_transaction_by_block(i, 0)
-#
-#                 # Decode the function input
-#                 decoded_input = contract.decode_function_input(a['input'])
-#                 print(f"Decoded Input for Block {i}: {decoded_input}")
-#
-#                 # Check if the UID in the decoded input matches the user IDs in the list
-#                 if decoded_input[1]['bid'].split("#")[1]==event_name:
-#                     # Collect required data (passing the necessary details)
-#                     data = {
-#                         'name': str(decoded_input[1]['name']),
-#                         # Transaction date
-#                         'dob': str(decoded_input[1]['dob']),  # Did (e.g., some identifier from the contract)
-#                         # 'status': decoded_input[1]['status'],  # Transaction status
-#                         'gender': str(decoded_input[1]['gender']),  # Donation amount
-#                     }
-#                     print(f"Matching data found: {data}")
-#
-#                     # Append the data to the result list
-#                     mdata.append(data)
-#                     print(f"Updated data list: {mdata}")
-#                 else:
-#                     print(f"No match for Block {i}")
-#
-#             except Exception as e:
-#                 print(f"Error Processing Block {i}: {e}")
-#                 pass
-#
-#     except Exception as e:
-#         print(f"Error with contract ABI or interaction: {e}")
-#
-#     # Final response with the collected data
-#     print("Final Collected Data:")
-#     print(mdata)
-#
-#     # Returning the data to the frontend as JSON
-#     return jsonify({"task": "valid", "data": mdata})
-
 
 
 def view_details(id):
@@ -742,7 +678,6 @@ def view_details(id):
     ctext = uname + "#" + event_name
 
     try:
-        print("Loading contract ABI...")
         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
             contract_json = json.load(file)
             contract_abi = contract_json['abi']
@@ -790,11 +725,11 @@ def cancel_booking():
     session['bdi'] = id
     return render_template("user/cancel_booking.html")
 
-
-@app.route("/cancel_booking_confirm")
-def cancel_booking_confirm():
-    reason = request.form['reason']
-    qry = "SELECT `ticket_id` FROM `booking_details` WHERE `id`=%s"
+#
+# @app.route("/cancel_booking_confirm")
+# def cancel_booking_confirm():
+#     reason = request.form['reason']
+#     qry = "SELECT `ticket_id` FROM `booking_details` WHERE `id`=%s"
 
 
 app.run(debug=True)
