@@ -210,7 +210,7 @@ def take_action():
     return render_template("admin/takeaction.html")
 
 
-@app.route("/submit_action", methods=['[post'])
+@app.route("/submit_action", methods=['post'])
 def submit_action():
     action = request.form['action']
     remarks = request.form['remarks']
@@ -246,7 +246,7 @@ def submit_action():
         iud(qry, session['report_id'])
 
         mail(seller_email['email'], "Scam report recieved")
-        mail(user_email['Email'], "Copy Of Action")
+        mail(user_email['email'], "Copy Of Action")
         return '''<script>alert("Success");window.location="/view_report"</script>'''
 
     elif action == "ban":
