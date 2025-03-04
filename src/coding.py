@@ -390,11 +390,9 @@ def insert_event_details():
 
         for i in range(number_of_tickets):
             ticket_id = str(uuid.uuid4())  # Generate a unique ticket ID
-            print(f"Inserting Ticket {i + 1}/{number_of_tickets} with ID: {ticket_id}")
 
             try:
                 iud(ticket_query, (ticket_id, event_id, price))
-                print(f"✅ Ticket {i + 1} inserted successfully!")
             except Exception as e:
                 print(f"❌ Ticket {i + 1} failed: {e}")
 
@@ -475,7 +473,6 @@ def seller_view_booking_details(id):
     ctext = uname + "#" + event_name
 
     try:
-        print("Loading contract ABI...")
         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
             contract_json = json.load(file)
             contract_abi = contract_json['abi']
@@ -758,19 +755,6 @@ def view_details(id):
     print("Final Collected Data:", mdata)
 
     return mdata  # Return data as a normal list, not as JSON
-
-
-@app.route("/cancel_booking")
-def cancel_booking():
-    id = request.args.get("id")
-    session['bdi'] = id
-    return render_template("user/cancel_booking.html")
-
-#
-# @app.route("/cancel_booking_confirm")
-# def cancel_booking_confirm():
-#     reason = request.form['reason']
-#     qry = "SELECT `ticket_id` FROM `booking_details` WHERE `id`=%s"
 
 
 app.run(debug=True)
