@@ -252,7 +252,7 @@ def submit_action():
         return '''<script>alert("Success");window.location="/view_report"</script>'''
 
     if action == "warning":
-        qry = "UPDATE `reports` SET ACTION='warned about the report' WHERE id=%s"
+        qry = "UPDATE `reports` SET ACTION='warned seller' WHERE id=%s"
         iud(qry, session['report_id'])
 
         mail(seller_email['email'], "Scam report recieved")
@@ -383,22 +383,10 @@ def insert_event_details():
         # Insert event details
         event_query = "INSERT INTO `event` VALUES (null, %s, %s, %s, %s, %s, %s, %s, %s)"
         event_id = iud(event_query, (session['lid'], name, details, venue, location, image_name, date, event_type))
-        print(f"Inserted Event ID: {event_id}")
+       # print(f"Inserted Event ID: {event_id}")
 
         # Insert tickets
         ticket_query = "INSERT INTO `tickets` VALUES (%s, %s, 'available', %s)"
-
-        def generate_unique_ticket_id():
-            """Generate a unique UUID with a retry limit to prevent infinite loops."""
-            retry_count = 0
-            while retry_count < 5:  # Retry only 5 times max
-                ticket_id = str(uuid.uuid4())
-                existing_ticket = selectone("SELECT COUNT(*) FROM tickets WHERE id = %s", (ticket_id,))
-                if existing_ticket and existing_ticket[0] == 0:
-                    return ticket_id
-                retry_count += 1
-                print(f"UUID collision detected. Retrying {retry_count}/5...")
-            raise Exception("Failed to generate a unique ticket ID after 5 retries")
 
         for i in range(number_of_tickets):
             ticket_id = str(uuid.uuid4())  # Generate a unique ticket ID
@@ -600,69 +588,73 @@ def process_booking():
     print(tickets)
 
     # Fetch available ticket IDs from the tickets table
-    qry = "SELECT id FROM `tickets` WHERE `status`='available' LIMIT %s"
-    ticket_ids = selectall2(qry, num_tickets)
+    qry = "SELECT id FROM `tickets` WHERE `status`='available' and eid = %s LIMIT %s"
+    ticket_ids = selectall2(qry, (session['eid'],num_tickets))
+
+    print("====count", len(ticket_ids))
 
     # If the number of available tickets doesn't match the requested number, show an error
     if len(ticket_ids) != num_tickets:
         return '''<script>alert("Not enough available tickets!");window.location="/user_home"</script>'''
 
-    # Insert into booking table
-
-    qry = "SELECT * FROM `booking` WHERE eid = %s AND lid=%s"
-    booking_res = selectone(qry, (session['eid'], session['lid']))
-
-    if booking_res is None:
-
-        qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
-        bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
     else:
-        bid = booking_res['id']
-        qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s WHERE id = %s"
-        iud(qry, (int(num_tickets) , bid))
 
-    with open(compiled_contract_path) as file:
-        contract_json = json.load(file)  # load contract info as JSON
-        contract_abi = contract_json['abi']  # fetch contract's abi - necessary to call its functions
-    contract = web3.eth.contract(address=deployed_contract_address, abi=contract_abi)
+        # Insert into booking table
 
-    # Insert ticket details into booking_details table
-    qry = "INSERT INTO `booking_details` VALUES(null, %s, %s, %s, %s, %s)"
-    for i, ticket in enumerate(tickets):
-        ticket_id = ticket_ids[i]['id']  # Get the ticket ID from available tickets
-        res = selectone("SELECT `name` FROM `user` WHERE lid = %s", session['lid'])
-        Name = res['name']
+        qry = "SELECT * FROM `booking` WHERE eid = %s AND lid=%s"
+        booking_res = selectone(qry, (session['eid'], session['lid']))
 
-        res_evnt = selectone("SELECT ename FROM `event` WHERE id = %s", session['eid'])
+        if booking_res is None:
 
-        Event_name = res_evnt['ename']
+            qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
+            bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+        else:
+            bid = booking_res['id']
+            qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s WHERE id = %s"
+            iud(qry, (int(num_tickets) , bid))
 
-        iud(qry, (bid, ticket['name'], ticket['dob'], ticket['gender'], ticket_id))  # Insert each ticket with its ID
-        try:
+        with open(compiled_contract_path) as file:
+            contract_json = json.load(file)  # load contract info as JSON
+            contract_abi = contract_json['abi']  # fetch contract's abi - necessary to call its functions
+        contract = web3.eth.contract(address=deployed_contract_address, abi=contract_abi)
 
+        # Insert ticket details into booking_details table
+        qry = "INSERT INTO `booking_details` VALUES(null, %s, %s, %s, %s, %s)"
+        for i, ticket in enumerate(tickets):
+            ticket_id = ticket_ids[i]['id']  # Get the ticket ID from available tickets
+            res = selectone("SELECT `name` FROM `user` WHERE lid = %s", session['lid'])
+            Name = res['name']
 
-            blocknumber = web3.eth.get_block_number()
-            message2 = contract.functions.addreq(blocknumber + 1, str(Name)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
-                                                  ).transact({'from': web3.eth.accounts[0]})
+            res_evnt = selectone("SELECT ename FROM `event` WHERE id = %s", session['eid'])
 
-            print(message2)
+            Event_name = res_evnt['ename']
 
-
-        except Exception as e:
-            print("==================")
-            print("==================")
-            print("==================")
-            print(str(e))
-
-    # Update the ticket status to 'booked' for each assigned ticket
-    for ticket_id in ticket_ids:
-        qry = "UPDATE `tickets` SET `status`='booked' WHERE `id`=%s"
-        iud(qry, (ticket_id['id'],))  # Mark the ticket as booked
+            iud(qry, (bid, ticket['name'], ticket['dob'], ticket['gender'], ticket_id))  # Insert each ticket with its ID
+            try:
 
 
+                blocknumber = web3.eth.get_block_number()
+                message2 = contract.functions.addreq(blocknumber + 1, str(Name)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
+                                                      ).transact({'from': web3.eth.accounts[0]})
+
+                print(message2)
 
 
-    return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
+            except Exception as e:
+                print("==================")
+                print("==================")
+                print("==================")
+                print(str(e))
+
+        # Update the ticket status to 'booked' for each assigned ticket
+        for ticket_id in ticket_ids:
+            qry = "UPDATE `tickets` SET `status`='booked' WHERE `id`=%s"
+            iud(qry, (ticket_id['id'],))  # Mark the ticket as booked
+
+
+
+
+        return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
 
 
 @app.route("/manage_bookings")

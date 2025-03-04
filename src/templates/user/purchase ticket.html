@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -69,12 +68,29 @@
       color: #1565C0;
       margin-bottom: 10px;
     }
+    .error {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
   </style>
   <script>
     function generateFields() {
       const numTickets = document.getElementById("num_tickets").value;
+      const availableTickets =  document.getElementById("available").value;
+      const errorMsg = document.getElementById("error_msg");
       const container = document.getElementById("ticket_details");
-      container.innerHTML = ""; // Clear previous fields
+
+      // Clear previous fields and error message
+      container.innerHTML = "";
+      errorMsg.innerHTML = "";
+
+
+      if (numTickets > availableTickets) {
+        errorMsg.innerHTML = "Error: The number of tickets exceeds the available limit!";
+        return; // Stop further execution
+      }
 
       for (let i = 1; i <= numTickets; i++) {
         const div = document.createElement("div");
@@ -102,6 +118,9 @@
         container.appendChild(div);
       }
     }
+
+
+
   </script>
 </head>
 <body>
@@ -111,7 +130,10 @@
       <h3>{{ event['ename'] }}</h3>
       <p><strong>Date:</strong> {{ event['date'] }}</p>
       <p><strong>Venue:</strong> {{ event['venue'] }}</p>
-      <p><strong>Tickets Available:</strong> {{ ticket }}</p>
+      <p><strong>Tickets Available:</strong>  <input type="text" id="available" disabled value="{{ ticket }}"></p>
+
+
+
       <p><strong>Price per Ticket:</strong> ₹{{ price }}</p>
     </div>
     <form action="{{ url_for('process_booking', event_id=event['id']) }}" method="POST">
@@ -119,10 +141,12 @@
         <label for="num_tickets">Number of Tickets:</label>
         <input type="number" id="num_tickets" name="num_tickets" min="1" max="{{ event['available_tickets'] }}" required onchange="generateFields()">
       </div>
+      <p id="error_msg" class="error"></p> <!-- Error message container -->
       <div id="ticket_details"></div>
       <div class="form-group">
-        <button type="submit">Book Tickets</button>
+        <button type="submit" onclick="">Book Tickets</button>
       </div>
     </form>
   </div>
 </body>
+</html>
