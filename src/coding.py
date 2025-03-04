@@ -296,6 +296,55 @@ def manage_events():
     return render_template("seller/manage_events.html", val=res)
 
 
+@app.route("/edit_event")
+def edit_event():
+    id = request.args.get('id')
+    session['e_event_id'] = id
+
+    qry = "SELECT * FROM `event` WHERE id = %s"
+    res = selectone(qry, id)
+
+    return render_template("Seller/edit_event_details.html", val = res)
+
+
+@app.route("/update_event", methods=['post'])
+def update_event():
+    try:
+        name = request.form['textfield']
+        details = request.form['textfield2']
+        date = request.form['textfield3']
+        venue = request.form['textfield4']
+
+        location = request.form['location']
+        event_type = request.form['type']
+        image = request.files['file']
+
+        # Save image securely
+        image_name = secure_filename(image.filename)
+        image_path = os.path.join('static/uploads', image_name)
+        image.save(image_path)
+
+        qry = "UPDATE `event` SET `ename`=%s, `details`=%s, `venue`=%s, `location`=%s, `image`=%s, `date`=%s, `type`=%s WHERE `id` = %s"
+        iud(qry, (name, details, venue, location, image_name, date, event_type, session['e_event_id']))
+
+        return '''<script>alert("Edited");window.location="/manage_events"</script>'''
+
+    except:
+        name = request.form['textfield']
+        details = request.form['textfield2']
+        date = request.form['textfield3']
+        venue = request.form['textfield4']
+
+        location = request.form['location']
+        event_type = request.form['type']
+
+
+        qry = "UPDATE `event` SET `ename`=%s, `details`=%s, `venue`=%s, `location`=%s, `date`=%s, `type`=%s WHERE `id` = %s"
+        iud(qry, (name, details, venue, location, date, event_type, session['e_event_id']))
+
+        return '''<script>alert("Edited");window.location="/manage_events"</script>'''
+
+
 @app.route("/delete_event")
 @login_required
 def delete_event():

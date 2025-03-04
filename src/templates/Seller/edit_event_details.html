@@ -1,0 +1,119 @@
+{% extends "Seller/seller_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="update_event" enctype="multipart/form-data">
+  <table width="200" border="1" class="table table-hover table-striped">
+    <tr>
+      <th scope="col">Event name </th>
+      <th scope="col"><label>
+        <input type="text" name="textfield" required value="{{val['ename']}}"/>
+      </label></th>
+    </tr>
+    <tr>
+      <th>Details</th>
+      <td><label>
+      <input type="text" name="textfield2" required value="{{val['details']}}"/>
+      </label></td>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <td><label>
+      <input type="date" name="textfield3" required value="{{val['date']}}"/>
+      </label></td>
+    </tr>
+
+    <tr>
+      <th>Venue</th>
+      <td><input type="text" name="textfield4" required value="{{val['venue']}}"></td>
+    </tr>
+
+     <tr>
+  <th>Location</th>
+  <td>
+    <select name="location" required>
+      <option value="" disabled selected>Select a State</option>
+      <option value="Andhra Pradesh" {% if val['location'] == "Andhra Pradesh" %} selected {% endif %} >Andhra Pradesh</option>
+      <option value="Arunachal Pradesh" {% if val['location'] == "Arunachal Pradesh" %} selected {% endif %}>Arunachal Pradesh</option>
+      <option value="Assam" {% if val['location'] == "Assam" %} selected {% endif %} >Assam</option>
+      <option value="Bihar" {% if val['location'] == "Bihar" %} selected {% endif %} >Bihar</option>
+      <option value="Chhattisgarh" {% if val['location'] == "Chhattisgarh" %} selected {% endif %} >Chhattisgarh</option>
+      <option value="Goa" {% if val['location'] == "Goa" %} selected {% endif %}>Goa</option>
+      <option value="Gujarat" {% if val['location'] == "Gujarat" %} selected {% endif %}>Gujarat</option>
+      <option value="Haryana" {% if val['location'] == "Haryana" %} selected {% endif %}>Haryana</option>
+      <option value="Himachal Pradesh" {% if val['location'] == "Himachal Pradesh" %} selected {% endif %}>Himachal Pradesh</option>
+      <option value="Jharkhand" {% if val['location'] == "Jharkhand" %} selected {% endif %}>Jharkhand</option>
+      <option value="Karnataka" {% if val['location'] == "Karnataka" %} selected {% endif %}>Karnataka</option>
+      <option value="Kerala" {% if val['location'] == "Kerala" %} selected {% endif %}>Kerala</option>
+      <option value="Madhya Pradesh" {% if val['location'] == "Madhya Pradesh" %} selected {% endif %}>Madhya Pradesh</option>
+      <option value="Maharashtra" {% if val['location'] == "Maharashtra" %} selected {% endif %}>Maharashtra</option>
+      <option value="Manipur" {% if val['location'] == "Manipur" %} selected {% endif %}>Manipur</option>
+      <option value="Meghalaya" {% if val['location'] == "Meghalaya" %} selected {% endif %}>Meghalaya</option>
+      <option value="Mizoram" {% if val['location'] == "Mizoram" %} selected {% endif %}>Mizoram</option>
+      <option value="Nagaland" {% if val['location'] == "Nagaland" %} selected {% endif %}>Nagaland</option>
+      <option value="Odisha" {% if val['location'] == "Odisha" %} selected {% endif %}>Odisha</option>
+      <option value="Punjab" {% if val['location'] == "Punjab" %} selected {% endif %}>Punjab</option>
+      <option value="Rajasthan" {% if val['location'] == "Rajasthan" %} selected {% endif %}>Rajasthan</option>
+      <option value="Sikkim" {% if val['location'] == "Sikkim" %} selected {% endif %}>Sikkim</option>
+      <option value="Tamil Nadu" {% if val['location'] == "Tamil Nadu" %} selected {% endif %}>Tamil Nadu</option>
+      <option value="Telangana" {% if val['location'] == "Telangana" %} selected {% endif %}>Telangana</option>
+      <option value="Tripura" {% if val['location'] == "Tripura" %} selected {% endif %}>Tripura</option>
+      <option value="Uttar Pradesh" {% if val['location'] == "Uttar Pradesh" %} selected {% endif %}>Uttar Pradesh</option>
+      <option value="Uttarakhand" {% if val['location'] == "Uttarakhand" %} selected {% endif %}>Uttarakhand</option>
+      <option value="West Bengal" {% if val['location'] == "West Bengal" %} selected {% endif %}>West Bengal</option>
+      <option value="Andaman and Nicobar Islands" {% if val['location'] == "Andaman and Nicobar Islands" %} selected {% endif %}>Andaman and Nicobar Islands</option>
+      <option value="Chandigarh" {% if val['location'] == "Chandigarh" %} selected {% endif %}>Chandigarh</option>
+      <option value="Dadra and Nagar Haveli and Daman and Diu" {% if val['location'] == "Dadra and Nagar Haveli and Daman and Diu" %} selected {% endif %}>Dadra and Nagar Haveli and Daman and Diu</option>
+      <option value="Lakshadweep" {% if val['location'] == "Lakshadweep" %} selected {% endif %}>Lakshadweep</option>
+      <option value="Delhi" {% if val['location'] == "Delhi" %} selected {% endif %}>Delhi</option>
+      <option value="Puducherry" {% if val['location'] == "Puducherry" %} selected {% endif %}>Puducherry</option>
+    </select>
+  </td>
+</tr>
+
+
+      <tr>
+      <th>Type</th>
+<td>
+  <select name="type">
+    <option value="dj_night" {% if val['type'] == "dj_night" %} selected {% endif %}>DJ Night</option>
+    <option value="concert" {% if val['type'] == "concert" %} selected {% endif %}>Concert</option>
+    <option value="seminar" {% if val['type'] == "seminar" %} selected {% endif %}>Seminar</option>
+    <option value="workshop" {% if val['type'] == "workshop" %} selected {% endif %}>Workshop</option>
+    <option value="webinar" {% if val['type'] == "webinar" %} selected {% endif %}>Webinar</option>
+    <option value="conference" {% if val['type'] == "conference" %} selected {% endif %}>Conference</option>
+    <option value="exhibition" {% if val['type'] == "exhibition" %} selected {% endif %}>Exhibition</option>
+    <option value="sports_event" {% if val['type'] == "sports_event" %} selected {% endif %}>Sports Event</option>
+    <option value="festival" {% if val['type'] == "festival" %} selected {% endif %}>Festival</option>
+    <option value="theater_show" {% if val['type'] == "theater_show" %} selected {% endif %}>Theater Show</option>
+  </select>
+</td>
+
+    </tr>
+
+<!--     <tr>-->
+<!--      <th>Price</th>-->
+<!--      <td><input type="text" name="textfield6" required value="{{val['price']}}"></td>-->
+<!--    </tr>-->
+
+
+     <tr>
+      <th>Image</th>
+      <td><input type="file" name="file"></td>
+    </tr>
+
+    <tr align="center">
+      <td colspan="2"><label>
+        <input type="submit" name="Submit" value="Submit" class="btn btn-primary"/>
+      </label></td>
+    </tr>
+  </table>
+  <label></label>
+</form>
+</body>
+<!--</html>-->
+{% endblock %}
