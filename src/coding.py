@@ -35,7 +35,7 @@ app.config['MAIL_USERNAME'] = 'smartpass1216@gmail.com'
 app.config['MAIL_PASSWORD'] = 'gdwf cqji ehtf sedt'
 
 def login_required(func): # if lid not in session login pageilek ponm after logout
-    @functools.wraps(func)
+    @functools.wraps(func) #preserves metadata
     def secure_function():
         if "lid" not in session:
             return render_template('login_index.html')
@@ -189,8 +189,7 @@ def accept_seller():
 
 @app.route("/reject_seller")
 @login_required
-@login_required
-def reject_sellerlph():
+def reject_seller():
     id = request.args.get('id')
     qry = "UPDATE `login` SET TYPE='reject' WHERE id=%s"
     iud(qry, id)
@@ -235,12 +234,12 @@ def submit_action():
     def mail(email, subject):
         try:
             gmail = smtplib.SMTP('smtp.gmail.com', 587)
-            gmail.ehlo()
-            gmail.starttls()
+            gmail.ehlo()                                #establishing the smtp connection
+            gmail.starttls()                            #start tls encryption
             gmail.login('smartpass1216@gmail.com', 'gdwf cqji ehtf sedt')
         except Exception as e:
             print("Couldn't setup email!!" + str(e))
-        msg = MIMEText(remarks)
+        msg = MIMEText(remarks)                 #creates an email body
         print(msg)
         msg['Subject'] = subject
         msg['To'] = email
@@ -255,16 +254,16 @@ def submit_action():
         qry = "UPDATE `reports` SET ACTION='warned seller' WHERE id=%s"
         iud(qry, session['report_id'])
 
-        mail(seller_email['email'], "Scam report recieved")
-        mail(user_email['email'], "Copy Of Action")
+        mail(seller_email['email'], "Scam report recieved ")
+        mail(user_email['email'], "Copy of action of your report")
         return '''<script>alert("Success");window.location="/view_report"</script>'''
 
     elif action == "ban":
         qry = "UPDATE `reports` SET ACTION='Seller Banned' WHERE id=%s"
         iud(qry, session['report_id'])
 
-        mail(seller_email['email'], "Account Banned")
-        mail(user_email['email'], "Action againts seller")
+        mail(seller_email['email'], "Your account has been banned")
+        mail(user_email['email'], "Thanks for your report.")
 
         qry = "UPDATE `login` SET TYPE='banned' WHERE id=%s"
         iud(qry, seller_email['lid'])
@@ -461,21 +460,15 @@ def seller_view_booking_details(id):
     qry = "SELECT * FROM `booking` WHERE id = %s"
     booking = selectone(qry, id)
 
-    # Retrieve the user ID from session
-    qry = "SELECT NAME FROM `user` WHERE lid=%s"
-    res = selectone(qry, booking['lid'])
-
-    uname = res['NAME']
-
     qry="SELECT ename FROM `event` WHERE id = %s"
     res = selectone(qry, booking['eid'])
     event_name = res['ename']
-    ctext = uname + "#" + event_name
+    ctext = id + "#" + event_name
 
     try:
         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
             contract_json = json.load(file)
-            contract_abi = contract_json['abi']
+            contract_abi = contract_json['abi'] #application binary interface
 
         contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
@@ -605,6 +598,30 @@ def process_booking():
 
             qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
             bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+
+            import qrcode
+
+            # Data to encode
+            data = bid
+
+            # Create a QR code object
+            qr = qrcode.QRCode(
+                version=1,  # Controls the size of the QR code
+                error_correction=qrcode.constants.ERROR_CORRECT_L,  # Error correction level
+                box_size=10,  # Size of each box in pixels
+                border=4  # Border size
+            )
+
+            qr.add_data(data)
+            qr.make(fit=True)
+
+            # Create an image from the QR Code instance
+            img = qr.make_image(fill="black", back_color="white")
+
+            image_path = os.path.join('static/qr', str(bid)+".jpg")
+            img.save(image_path)
+
+
         else:
             bid = booking_res['id']
             qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s WHERE id = %s"
@@ -631,16 +648,13 @@ def process_booking():
 
 
                 blocknumber = web3.eth.get_block_number()
-                message2 = contract.functions.addreq(blocknumber + 1, str(Name)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
+                message2 = contract.functions.addreq(blocknumber + 1, str(bid)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
                                                       ).transact({'from': web3.eth.accounts[0]})
 
                 print(message2)
 
 
             except Exception as e:
-                print("==================")
-                print("==================")
-                print("==================")
                 print(str(e))
 
         # Update the ticket status to 'booked' for each assigned ticket
@@ -681,7 +695,7 @@ def view_booking_details():
     qry = "SELECT `details` FROM `event` WHERE `id`=%s"
     res2 = selectone(qry, eid)
 
-    details = view_details(eid)
+    details = view_details(eid, id)
 
     return render_template("user/booking_details.html", val=details, details = res2['details'])
 
@@ -703,17 +717,13 @@ def submit_scam():
     return '''<script>alert("Reported");window.location="choose_event"</script>'''
 
 
-def view_details(id):
+def view_details(eid, id):
     # Retrieve the user ID from session
-    qry = "SELECT NAME FROM `user` WHERE lid=%s"
-    res = selectone(qry, session['lid'])
-
-    uname = res['NAME']
 
     qry="SELECT ename FROM `event` WHERE id = %s"
-    res = selectone(qry, id)
+    res = selectone(qry, eid)
     event_name = res['ename']
-    ctext = uname + "#" + event_name
+    ctext = id + "#" + event_name
 
     try:
         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
