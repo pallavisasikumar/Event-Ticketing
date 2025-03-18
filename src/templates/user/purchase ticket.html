@@ -75,53 +75,66 @@
       margin-bottom: 10px;
     }
   </style>
-  <script>
-    function generateFields() {
-      const numTickets = document.getElementById("num_tickets").value;
-      const availableTickets =  document.getElementById("available").value;
-      const errorMsg = document.getElementById("error_msg");
-      const container = document.getElementById("ticket_details");
+ <script>
+  function generateFields() {
+    const numTickets = document.getElementById("num_tickets").value;
+    const availableTickets = document.getElementById("available").value;
+    const errorMsg = document.getElementById("error_msg");
+    const container = document.getElementById("ticket_details");
 
-      // Clear previous fields and error message
-      container.innerHTML = "";
-      errorMsg.innerHTML = "";
+    // Clear previous fields and error message
+    container.innerHTML = "";
+    errorMsg.innerHTML = "";
 
-
-      if (numTickets > availableTickets) {
-        errorMsg.innerHTML = "Error: The number of tickets exceeds the available limit!";
-        return; // Stop further execution
-      }
-
-      for (let i = 1; i <= numTickets; i++) {
-        const div = document.createElement("div");
-        div.classList.add("ticket-info");
-        div.innerHTML = `
-          <h4>Ticket ${i} Details</h4>
-          <div class="form-group">
-            <label for="name_${i}">Name:</label>
-            <input type="text" id="name_${i}" name="name_${i}" required>
-          </div>
-          <div class="form-group">
-            <label for="dob_${i}">Date of Birth:</label>
-            <input type="date" id="dob_${i}" name="dob_${i}" required>
-          </div>
-          <div class="form-group">
-            <label for="gender_${i}">Gender:</label>
-            <select id="gender_${i}" name="gender_${i}" required>
-              <option value="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        `;
-        container.appendChild(div);
-      }
+    if (numTickets > availableTickets) {
+      errorMsg.innerHTML = "Error: The number of tickets exceeds the available limit!";
+      return; // Stop further execution
     }
 
+    for (let i = 1; i <= numTickets; i++) {
+      const div = document.createElement("div");
+      div.classList.add("ticket-info");
+      div.innerHTML = `
+        <h4>Ticket ${i} Details</h4>
+        <div class="form-group">
+          <label for="name_${i}">Name:</label>
+          <input type="text" id="name_${i}" name="name_${i}" required>
+        </div>
+        <div class="form-group">
+          <label for="dob_${i}">Date of Birth:</label>
+          <input type="date" id="dob_${i}" name="dob_${i}" required>
+        </div>
+        <div class="form-group">
+          <label for="gender_${i}">Gender:</label>
+          <select id="gender_${i}" name="gender_${i}" required>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gov_type_${i}">Government ID Type:</label>
+          <select id="gov_type_${i}" name="gov_type_${i}" required>
+            <option value="">Select ID Type</option>
+            <option value="Aadhar">Aadhar</option>
+            <option value="Passport">Passport</option>
+            <option value="Driving License">Driving License</option>
+            <option value="Voter ID">Voter ID</option>
+            <option value="PAN Card">PAN Card</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gov_id_${i}">Government ID:</label>
+          <input type="text" id="gov_id_${i}" name="gov_id_${i}" required placeholder="Enter Gov ID">
+        </div>
+      `;
+      container.appendChild(div);
+    }
+  }
+</script>
 
 
-  </script>
 </head>
 <body>
   <div class="container">

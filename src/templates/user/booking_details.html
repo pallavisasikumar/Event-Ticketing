@@ -107,14 +107,17 @@
 
     <!-- Ticket Holder Details Section -->
     <div class="ticket-holder-container">
-      {% for i in val %}
-        <div class="ticket">
-          <p><strong>Name:</strong> {{ i['name'] }}</p>
-          <p><strong>Date of Birth:</strong> {{ i['dob'] }}</p>
-          <p><strong>Gender:</strong> {{ i['gender'] }}</p>
-        </div>
-      {% endfor %}
+  {% for i in val %}
+    <div class="ticket">
+      <p><strong>Name:</strong> {{ i['name'] }}</p>
+      <p><strong>Date of Birth:</strong> {{ i['dob'] }}</p>
+      <p><strong>Gender:</strong> {{ i['gender'] }}</p>
+      <p><strong>Government ID Type:</strong> {{ i['gov_id_type'] }}</p>  <!-- Added ID Type -->
+      <p><strong>Government ID:</strong> {{ i['gov_id'] }}</p>  <!-- Added ID -->
     </div>
+  {% endfor %}
+</div>
+
 
     <a href="{{ url_for('manage_bookings') }}" class="btn">Back to Events</a>
   </div>

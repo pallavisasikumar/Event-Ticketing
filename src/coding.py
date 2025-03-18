@@ -20,7 +20,7 @@ web3 = Web3(HTTPProvider(blockchain_address,{"timeout": 800}))
 web3.eth.defaultAccount = web3.eth.accounts[0]
 compiled_contract_path = r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json"
 # Deployed contract address (see `migrate` command output: `contract address`)
-deployed_contract_address = '0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE'
+deployed_contract_address = '0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b'
 # Create your views here.
 app = Flask(__name__) #flaskobject created
 
@@ -470,7 +470,7 @@ def seller_view_booking_details(id):
             contract_json = json.load(file)
             contract_abi = contract_json['abi'] #application binary interface
 
-        contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
+        contract = web3.eth.contract(address='0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 
@@ -572,8 +572,10 @@ def process_booking():
         name = request.form.get(f"name_{i}")
         dob = request.form.get(f"dob_{i}")
         gender = request.form.get(f"gender_{i}")
+        gov_type = request.form.get(f"gov_type_{i}")
+        gov_id = request.form.get(f"gov_id_{i}")
 
-        tickets.append({"name": name, "dob": dob, "gender": gender})
+        tickets.append({"name": name, "dob": dob, "gender": gender, "gov_type" : gov_type, "gov_id" : gov_id})
 
     print(tickets)
 
@@ -648,7 +650,7 @@ def process_booking():
 
 
                 blocknumber = web3.eth.get_block_number()
-                message2 = contract.functions.addreq(blocknumber + 1, str(bid)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id
+                message2 = contract.functions.addreq(blocknumber + 1, str(bid)+"#"+Event_name, ticket['name'], ticket['dob'], ticket['gender'], ticket_id, ticket['gov_type'] ,ticket['gov_id'], "unused"
                                                       ).transact({'from': web3.eth.accounts[0]})
 
                 print(message2)
@@ -730,7 +732,7 @@ def view_details(eid, id):
             contract_json = json.load(file)
             contract_abi = contract_json['abi']
 
-        contract = web3.eth.contract(address='0x7A8dC142170Eb340CBaBE22E6BD303D4613b6adE', abi=contract_abi)
+        contract = web3.eth.contract(address='0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 
