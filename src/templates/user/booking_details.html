@@ -11,8 +11,8 @@
       padding: 0;
       background: #f4f4f9;
       color: #333;
-      display: block; /* Allow content to expand */
-      overflow-y: auto; /* Enable scrolling */
+      display: block;
+      overflow-y: auto;
     }
     .container {
       width: 90%;
@@ -22,17 +22,13 @@
       padding: 40px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       margin: 40px auto;
-      min-height: 100vh; /* Ensures content expands */
+      min-height: 100vh;
       text-align: center;
     }
     h2 {
       font-size: 2.2rem;
       color: #333;
       margin-bottom: 30px;
-      position: relative;
-      top: 0;
-      left: 0;
-      width: 100%;
       background: white;
       padding: 15px 0;
       z-index: 10;
@@ -47,6 +43,15 @@
     .event-details h3 {
       font-size: 1.5rem;
       font-weight: 600;
+    }
+    .qr-code-container {
+      margin: 20px 0;
+    }
+    .qr-code img {
+      width: 140px;
+      height: 140px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
     }
     .ticket-holder-container {
       display: flex;
@@ -105,19 +110,27 @@
       <h3>{{ details }}</h3>
     </div>
 
+    <!-- QR Code Section (for the entire booking) -->
+    <div class="qr-code-container">
+      {% if qrcode %}
+        <img src="../static/qr/{{ qrcode }}" alt="Booking QR Code">
+      {% else %}
+        <p style="color: red; font-size: 1rem;">QR Code Not Available</p>
+      {% endif %}
+    </div>
+
     <!-- Ticket Holder Details Section -->
     <div class="ticket-holder-container">
-  {% for i in val %}
-    <div class="ticket">
-      <p><strong>Name:</strong> {{ i['name'] }}</p>
-      <p><strong>Date of Birth:</strong> {{ i['dob'] }}</p>
-      <p><strong>Gender:</strong> {{ i['gender'] }}</p>
-      <p><strong>Government ID Type:</strong> {{ i['gov_id_type'] }}</p>  <!-- Added ID Type -->
-      <p><strong>Government ID:</strong> {{ i['gov_id'] }}</p>  <!-- Added ID -->
+      {% for i in val %}
+        <div class="ticket">
+          <p><strong>Name:</strong> {{ i['name'] }}</p>
+          <p><strong>Date of Birth:</strong> {{ i['dob'] }}</p>
+          <p><strong>Gender:</strong> {{ i['gender'] }}</p>
+          <p><strong>Government ID Type:</strong> {{ i['gov_id_type'] }}</p>
+          <p><strong>Government ID:</strong> {{ i['gov_id'] }}</p>
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-</div>
-
 
     <a href="{{ url_for('manage_bookings') }}" class="btn">Back to Events</a>
   </div>

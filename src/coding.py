@@ -691,15 +691,14 @@ def manage_bookings():
 def view_booking_details():
     id = request.args.get("id")
     eid = request.args.get('eid')
-    qry = "SELECT * FROM `booking_details` WHERE `booking_details`.bid=%s"
-    res = selectall2(qry, id)
-
     qry = "SELECT `details` FROM `event` WHERE `id`=%s"
     res2 = selectone(qry, eid)
 
     details = view_details(eid, id)
 
-    return render_template("user/booking_details.html", val=details, details = res2['details'])
+    qr = str(id)+".jpg"
+
+    return render_template("user/booking_details.html", val=details, details = res2['details'], qrcode = qr)
 
 
 @app.route("/report_scam")
@@ -753,6 +752,8 @@ def view_details(eid, id):
                         'name': str(decoded_input[1]['name']),
                         'dob': str(decoded_input[1]['dob']),
                         'gender': str(decoded_input[1]['gender']),
+                        'gov_id_type': str(decoded_input[1]['gov_id_type']),
+                        'gov_id': str(decoded_input[1]['gov_id'])
                     }
                     mdata.append(data)
                     print(f"Updated data list: {mdata}")
