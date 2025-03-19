@@ -503,7 +503,7 @@ def seller_view_booking_details(id):
 
     print("Final Collected Data:", mdata)
 
-    return mdata  # Return data as a normal list, not as JSON
+    return mdata
 
 
 
@@ -637,9 +637,7 @@ def process_booking():
         # Insert ticket details into booking_details table
         qry = "INSERT INTO `booking_details` VALUES(null, %s, %s, %s, %s, %s)"
         for i, ticket in enumerate(tickets):
-            ticket_id = ticket_ids[i]['id']  # Get the ticket ID from available tickets
-            res = selectone("SELECT `name` FROM `user` WHERE lid = %s", session['lid'])
-            Name = res['name']
+            ticket_id = ticket_ids[i]['id']
 
             res_evnt = selectone("SELECT ename FROM `event` WHERE id = %s", session['eid'])
 
@@ -663,9 +661,6 @@ def process_booking():
         for ticket_id in ticket_ids:
             qry = "UPDATE `tickets` SET `status`='booked' WHERE `id`=%s"
             iud(qry, (ticket_id['id'],))  # Mark the ticket as booked
-
-
-
 
         return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
 
