@@ -450,8 +450,6 @@ def view_bookings_details():
     id = request.args.get('id')
     data = seller_view_booking_details(id)
 
-    print("====",data,"===============")
-
     return render_template("Seller/booking_details.html", val = data)
 
 
@@ -490,6 +488,8 @@ def seller_view_booking_details(id):
                         'name': str(decoded_input[1]['name']),
                         'dob': str(decoded_input[1]['dob']),
                         'gender': str(decoded_input[1]['gender']),
+                        'gov_id_type': str(decoded_input[1]['gov_id_type']),
+                        'gov_id': str(decoded_input[1]['gov_id'])
                     }
                     mdata.append(data)
                     print(f"Updated data list: {mdata}")
