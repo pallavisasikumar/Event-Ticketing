@@ -20,7 +20,7 @@ web3 = Web3(HTTPProvider(blockchain_address,{"timeout": 800}))
 web3.eth.defaultAccount = web3.eth.accounts[0]
 compiled_contract_path = r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json"
 # Deployed contract address (see `migrate` command output: `contract address`)
-deployed_contract_address = '0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b'
+deployed_contract_address = '0x023Bb010F690cd03ED88Fb737250d45B6eb56F53'
 # Create your views here.
 app = Flask(__name__) #flaskobject created
 
@@ -468,7 +468,7 @@ def seller_view_booking_details(id):
             contract_json = json.load(file)
             contract_abi = contract_json['abi'] #application binary interface
 
-        contract = web3.eth.contract(address='0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b', abi=contract_abi)
+        contract = web3.eth.contract(address='0x023Bb010F690cd03ED88Fb737250d45B6eb56F53', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 
@@ -560,12 +560,35 @@ def purchase_ticket():
     qry = "SELECT COUNT(*) as count, price FROM `tickets` WHERE eid=%s and status='available'"
     res2 = selectone(qry, id)
 
+    session['price'] = res2['price']
+
     return render_template("user/purchase ticket.html", event = res, ticket = res2["count"], price = res2['price'])
+
+
+@app.route("/payment")
+def payment():
+    import razorpay
+    client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M", "XgwjnFvJQNG6cS7Q13aHKDJj"))
+    print(client)
+
+    to_pay = int(session['amt_to_pay']) * 100
+
+    payment = client.order.create({'amount': to_pay, 'currency': "INR", 'payment_capture': '1'})
+    return render_template('UserPayProceed.html', p=payment)
+
+
+@app.route("/user_pay_complete", methods=['post'])
+def user_pay_complete():
+    return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
 
 
 @app.route("/process_booking", methods=['POST'])
 def process_booking():
     num_tickets = int(request.form.get("num_tickets", 0))
+
+    amount_to_pay = int(num_tickets) * int(session['price'])
+
+    session['amt_to_pay'] = amount_to_pay
 
     tickets = []
     for i in range(1, num_tickets + 1):
@@ -598,8 +621,8 @@ def process_booking():
 
         if booking_res is None:
 
-            qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE())"
-            bid = iud(qry, (session['lid'], session['eid'], num_tickets))  # Get booking ID
+            qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, %s, CURDATE(), %s, %s)"
+            bid = iud(qry, (session['lid'], session['eid'], num_tickets, amount_to_pay, "paid"))  # Get booking ID
 
             import qrcode
 
@@ -626,8 +649,8 @@ def process_booking():
 
         else:
             bid = booking_res['id']
-            qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s WHERE id = %s"
-            iud(qry, (int(num_tickets) , bid))
+            qry = "UPDATE `booking` SET `ticket_count` = `ticket_count`+%s, amount=amount+%s WHERE id = %s"
+            iud(qry, (int(num_tickets) ,int(amount_to_pay), bid))
 
         with open(compiled_contract_path) as file:
             contract_json = json.load(file)  # load contract info as JSON
@@ -662,7 +685,7 @@ def process_booking():
             qry = "UPDATE `tickets` SET `status`='booked' WHERE `id`=%s"
             iud(qry, (ticket_id['id'],))  # Mark the ticket as booked
 
-        return '''<script>alert("Successfully Booked");window.location="/user_home"</script>'''
+        return redirect("/payment")
 
 
 @app.route("/manage_bookings")
@@ -726,7 +749,7 @@ def view_details(eid, id):
             contract_json = json.load(file)
             contract_abi = contract_json['abi']
 
-        contract = web3.eth.contract(address='0xc20C424ba44A751D7D032dfe47b6aAB1f2B7042b', abi=contract_abi)
+        contract = web3.eth.contract(address='0x023Bb010F690cd03ED88Fb737250d45B6eb56F53', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 

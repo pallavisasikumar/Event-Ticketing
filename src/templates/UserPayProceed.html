@@ -74,7 +74,6 @@
 
     <div class="card">
 	<h1 class="title">Proceed for Payment </h1>
-	<small class="muted">You can pay your college bus fees by clicking the pay button</small>
 	<div class="btn_container">
 		<!-- Payment Button -->
 		<button class="btn" id="rzp-button1">Pay</button>
@@ -89,13 +88,13 @@ var options = {
     "key": "rzp_test_edrzdb8Gbx5U5M", // Enter the Key ID generated from the Dashboard
     "amount": "{{p['amount']}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
-    "name": "KMCT BUS FEE",
+    "name": "Smartpass",
     "description": "Test Transaction",
     "order_id": "{{p['order_id']}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "callback_url": "http://127.0.0.1:5000/user_pay_complete",
     "prefill": {
-        "name": "Gaurav Kumar",
-        "email": "gaurav.kumar@example.com",
+        "name": "Smartpass",
+        "email": "smart.pass@example.com",
         "contact": "9999999999"
     },
     "notes": {
