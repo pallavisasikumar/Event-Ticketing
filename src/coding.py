@@ -96,7 +96,7 @@ def registration_code():
         name = request.form['name']
         place=request.form['place']
         post=request.form['post']
-        pin=request.form['pincode']
+        pin = request.form['pincode']
 
         state = request.form['state']
 
