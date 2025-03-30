@@ -98,6 +98,7 @@ def view_ticket_details():
 
     print("Final Collected Data:", mdata)
 
+
     return jsonify(mdata)
 
 
