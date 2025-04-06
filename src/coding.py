@@ -10,7 +10,7 @@ from email import encoders
 import uuid
 
 
-
+#web3 for interacting with ethereum
 from web3 import Web3, HTTPProvider
 # truffle development blockchain address
 blockchain_address = 'http://127.0.0.1:7545'
