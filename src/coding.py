@@ -20,7 +20,7 @@ web3 = Web3(HTTPProvider(blockchain_address,{"timeout": 800}))
 web3.eth.defaultAccount = web3.eth.accounts[0]
 compiled_contract_path = r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json"
 # Deployed contract address (see `migrate` command output: `contract address`)
-deployed_contract_address = '0x023Bb010F690cd03ED88Fb737250d45B6eb56F53'
+deployed_contract_address = '0x8e3F4Ed2D0aB15627c6f03a555b2084808b3e846'
 # Create your views here.
 app = Flask(__name__) #flaskobject created
 
@@ -467,8 +467,8 @@ def seller_view_booking_details(id):
         with open(r"D:\blockchain\node_modules\.bin\build\contracts\EventSystem.json") as file:
             contract_json = json.load(file)
             contract_abi = contract_json['abi'] #application binary interface
-
-        contract = web3.eth.contract(address='0x023Bb010F690cd03ED88Fb737250d45B6eb56F53', abi=contract_abi)
+            #ABI is required to interact with the contract.
+        contract = web3.eth.contract(address='0x8e3F4Ed2D0aB15627c6f03a555b2084808b3e846', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 
@@ -567,7 +567,7 @@ def purchase_ticket():
 
 @app.route("/payment")
 def payment():
-    import razorpay
+    import razorpay # razor pay module and api keys
     client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M", "XgwjnFvJQNG6cS7Q13aHKDJj"))
     print(client)
 
@@ -749,7 +749,7 @@ def view_details(eid, id):
             contract_json = json.load(file)
             contract_abi = contract_json['abi']
 
-        contract = web3.eth.contract(address='0x023Bb010F690cd03ED88Fb737250d45B6eb56F53', abi=contract_abi)
+        contract = web3.eth.contract(address='0x8e3F4Ed2D0aB15627c6f03a555b2084808b3e846', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 

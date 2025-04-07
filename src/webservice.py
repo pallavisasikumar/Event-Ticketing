@@ -11,7 +11,7 @@ web3 = Web3(HTTPProvider(blockchain_address,{"timeout": 800}))
 web3.eth.defaultAccount = web3.eth.accounts[0]
 compiled_contract_path = r"D:\blockchain\node_modules\.bin\build\contracts\VehicleHistory.json"
 # Deployed contract address (see `migrate` command output: `contract address`)
-deployed_contract_address = '0x023Bb010F690cd03ED88Fb737250d45B6eb56F53'
+deployed_contract_address = '0x8e3F4Ed2D0aB15627c6f03a555b2084808b3e846'
 
 
 
@@ -63,7 +63,7 @@ def view_ticket_details():
             contract_json = json.load(file)
             contract_abi = contract_json['abi']  # application binary interface
 
-        contract = web3.eth.contract(address='0x023Bb010F690cd03ED88Fb737250d45B6eb56F53', abi=contract_abi)
+        contract = web3.eth.contract(address='0x8e3F4Ed2D0aB15627c6f03a555b2084808b3e846', abi=contract_abi)
         blocknumber = web3.eth.get_block_number()
         mdata = []
 
